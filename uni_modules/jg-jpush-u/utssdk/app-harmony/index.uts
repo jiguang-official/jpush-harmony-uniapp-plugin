@@ -1,0 +1,169 @@
+
+
+/* 引入 interface.uts 文件中定义的变量 */
+import { EventCallBackParams } from '../interface.uts';
+
+/* 引入 unierror.uts 文件中定义的变量 */
+
+
+
+import { CallBackMsgUni } from './callback.uts';
+
+
+
+import { common, Want, AbilityConstant } from '@kit.AbilityKit';
+import { pushCommon, RemoteNotificationExtensionAbility } from '@kit.PushKit';
+
+import {
+	JMessage,
+	JMessageExtra,
+	JPushInterface,
+	JCollectControl
+} from '@jg/push';
+
+const TAG = "JPUSH-uni-"
+let APP_KEY : string | undefined = undefined
+let MY_WANT : Want | undefined = undefined
+
+UTSHarmony.onAppAbilityCreate((want : Want, launchParam : AbilityConstant.LaunchParam) => {
+	console.log(TAG, "onAppAbilityCreate")
+	if (undefined === APP_KEY) {
+		MY_WANT = want
+	} 
+	JPushInterface.setClickWant(want);
+	
+})
+
+UTSHarmony.onAppAbilityNewWant((want : Want, launchParam : AbilityConstant.LaunchParam) => {
+	console.log(TAG, "onAppAbilityNewWant")
+	if (undefined === APP_KEY) {
+		MY_WANT = want
+	}
+	JPushInterface.setClickWant(want);
+	
+})
+
+
+
+export function setEventCallBack(param : EventCallBackParams) : void {
+	console.log(TAG, "setEventCallBack");
+	JPushInterface.setCallBackMsg(new CallBackMsgUni(param));
+}
+
+
+export const setDebug = function (b : boolean) : void {
+	console.log(TAG, "setDebug:" + b)
+	JPushInterface.setDebug(b)
+}
+export const setAppKey = function (appKey : string) {
+	console.log(TAG, "setAppKey")
+	JPushInterface.setAppKey(appKey)
+	APP_KEY = appKey
+	if (undefined !== MY_WANT) {
+		JPushInterface.setClickWant(MY_WANT);
+		MY_WANT = undefined
+	}
+}
+export const setChannel = function (channel : string) {
+	JPushInterface.setChannel(channel)
+}
+
+export const init = function (context : common.UIAbilityContext | common.AbilityStageContext | undefined) {
+	if (undefined === context) {
+		context = getContext() as common.UIAbilityContext
+	}
+	console.log(TAG, "init")
+	JPushInterface.init(context)
+}
+
+export const getRegistrationId = function () : string {
+	return JPushInterface.getRegistrationId();
+}
+
+export const setCustomMessageMaxCacheCount = function (maxCacheCount : number) {
+	JPushInterface.setCustomMessageMaxCacheCount(maxCacheCount)
+}
+
+
+export const stopPush = function () {
+	return JPushInterface.stopPush();
+}
+
+
+export const resumePush = function () {
+	return JPushInterface.resumePush();
+}
+
+export const isPushStopped = function () : boolean | undefined {
+	return JPushInterface.isPushStopped();
+}
+
+
+export const addTags = function (sequence : number, tags : string[]) {
+	return JPushInterface.addTags(sequence, tags);
+}
+
+export const deleteTags = function (sequence : number, tags : string[]) {
+	return JPushInterface.deleteTags(sequence, tags);
+}
+export const setTags = function (sequence : number, tags : string[]) {
+	return JPushInterface.setTags(sequence, tags);
+}
+export const checkTagBindState = function (sequence : number, tag : string) {
+	return JPushInterface.checkTagBindState(sequence, tag);
+}
+export const cleanTags = function (sequence : number) {
+	return JPushInterface.cleanTags(sequence);
+}
+export const getTags = function (sequence : number, curr : number) {
+	return JPushInterface.getTags(sequence, curr);
+}
+export const setAlias = function (sequence : number, alias : string) {
+	return JPushInterface.setAlias(sequence, alias);
+}
+export const getAlias = function (sequence : number) {
+	return JPushInterface.getAlias(sequence);
+}
+export const deleteAlias = function (sequence : number) {
+	return JPushInterface.deleteAlias(sequence);
+}
+export const setMobileNumber = function (sequence : number, mobileNumber : string) {
+	return JPushInterface.setMobileNumber(sequence, mobileNumber);
+}
+export const setBadgeNumber = function (badgeNumber : number) {
+	return JPushInterface.setBadgeNumber(badgeNumber);
+}
+
+
+export const setClickWant = function (want : Want) : Promise<JMessage | undefined> {
+	return JPushInterface.setClickWant(want);
+}
+
+
+export const customMessageBackgroundData = function (data : pushCommon.PushPayload) : Promise<boolean> {
+	return JPushInterface.customMessageBackgroundData(data);
+}
+export const voIPMessageBackgroundData = function (data : pushCommon.PushPayload) : Promise<boolean> {
+	return JPushInterface.voIPMessageBackgroundData(data);
+}
+export const extraMessageBackgroundData = function (data : pushCommon.PushPayload) : Promise<boolean> {
+	return JPushInterface.extraMessageBackgroundData(data);
+}
+export const receiveExtraDataMessage = function (rNEAbility : RemoteNotificationExtensionAbility, remoteNotificationInfo : pushCommon.RemoteNotificationInfo) : Promise<JMessageExtra | undefined> {
+	return JPushInterface.receiveExtraDataMessage(rNEAbility, remoteNotificationInfo);
+}
+
+export const setListWifi = function (enable : boolean) {
+	return JCollectControl.setListWifi(getContext() as common.ApplicationContext, enable);
+}
+
+export const setGPS = function (enable : boolean) {
+	return JCollectControl.setGPS(getContext() as common.ApplicationContext, enable);
+}
+
+export const setEnableAppTerminate = function (enable : boolean) {
+	return JCollectControl.setEnableAppTerminate(getContext() as common.ApplicationContext, enable);
+}
+/**
+ * 更多插件开发的信息详见：https://uniapp.dcloud.net.cn/plugin/uts-plugin.html
+ */

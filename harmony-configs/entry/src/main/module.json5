@@ -1,0 +1,98 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "srcEntry": "./ets/entryability/JGPushAbilityStage.ets",
+    "description": "$string:module_desc",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet",
+      "2in1"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:EntryAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "PushMessageAbility",
+        "srcEntry": "./ets/entryability/PushMessageAbility.ets",
+        "launchType": "singleton",
+        "startWindowIcon": "$media:layered_image",
+        "startWindowBackground": "$color:start_window_background",
+        "skills": [
+          {
+            "actions": [
+              "action.ohos.push.listener"
+            ]
+          }
+        ]
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "RemoteNotificationExtAbility",
+        "type": "remoteNotification",
+        "srcEntry": "./ets/entryability/RemoteNotificationExtAbility.ets",
+        "description": "RemoteNotificationExtAbility test",
+        "exported": false,
+        "skills": [
+          {
+            "actions": ["action.hms.push.extension.remotenotification"]
+          }
+        ]
+      }
+    ],
+    "proxyData":[{
+      "uri": "datashareproxy://cn.allpublic.test.hmos/PushMessage",
+      "requiredWritePermission": "ohos.permission.WRITE_PRIVACY_PUSH_DATA",
+      "metadata":{
+        "name": "dataProperties",
+        "resource": "$profile:PushMessage"
+      }
+    }],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      }
+    ],
+	"metadata": [ 
+      {
+        "name": "JG_APP_KEY",
+        "value": "b266cd5c8544ba09b23733e3"
+      },
+      {
+        "name": "JG_DEBUG_MODE",
+        "value": "true"
+      },
+      {
+        "name": "JG_CHANNEL",
+        "value": "channel"
+      },
+      {
+        "name": "JG_CUSTOM_MESSAGE_MAX_CACHE_COUNT",
+        "value": "10"
+      }
+      ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "id": "jg-jpush-u",
+  "displayName": "jg-jpush-u",
+  "version": "1.0.0",
+  "description": "jg-jpush-u",
+  "keywords": [
+    "jg-jpush-u"
+],
+  "repository": "https://github.com/jiguang-official/jpush-harmony-uniapp-plugin",
+  "engines": {
+    "HBuilderX": "^3.6.8"
+  },
+  "dcloudext": {
+    "type": "uts",
+    "sale": {
+      "regular": {
+        "price": "0.00"
+      },
+      "sourcecode": {
+        "price": "0.00"
+      }
+    },
+    "contact": {
+      "qq": ""
+    },
+    "declaration": {
+      "ads": "无",
+      "data": "说明文档地址：\nhttps://docs.jiguang.cn/jpush/client/jghgzy_a_i_h#sdk-申请系统权限的说明",
+      "permissions": "说明文档地址：\nhttps://docs.jiguang.cn/jpush/client/jghgzy_a_i_h#sdk-申请系统权限的说明"
+    },
+    "npmurl": ""
+  },
+  "uni_modules": {
+    "dependencies": [],
+    "encrypt": [],
+    "platforms": {
+      "cloud": {
+        "tcb": "y",
+        "aliyun": "y",
+        "alipay": "y"
+      },
+      "client": {
+        "Vue": {
+          "vue2": "u",
+          "vue3": "y"
+        },
+        "App": {
+            "app-android": "u",
+            "app-ios": "u",
+            "app-harmony": "y"
+        },
+        "H5-mobile": {
+          "Safari": "u",
+          "Android Browser": "u",
+          "微信浏览器(Android)": "u",
+          "QQ浏览器(Android)": "u"
+        },
+        "H5-pc": {
+          "Chrome": "u",
+          "IE": "u",
+          "Edge": "u",
+          "Firefox": "u",
+          "Safari": "u"
+        },
+        "小程序": {
+          "微信": "u",
+          "阿里": "u",
+          "百度": "u",
+          "字节跳动": "u",
+          "QQ": "u",
+          "钉钉": "u",
+          "快手": "u",
+          "飞书": "u",
+          "京东": "u"
+        },
+        "快应用": {
+          "华为": "u",
+          "联盟": "u"
+        }
+      }
+    }
+  }
+}
