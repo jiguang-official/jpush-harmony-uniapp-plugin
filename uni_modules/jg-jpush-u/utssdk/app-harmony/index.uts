@@ -86,12 +86,12 @@ export const setCustomMessageMaxCacheCount = function (maxCacheCount : number) {
 
 
 export const stopPush = function () {
-	return JPushInterface.stopPush();
+	JPushInterface.stopPush();
 }
 
 
 export const resumePush = function () {
-	return JPushInterface.resumePush();
+	JPushInterface.resumePush();
 }
 
 export const isPushStopped = function () : boolean | undefined {
@@ -100,38 +100,38 @@ export const isPushStopped = function () : boolean | undefined {
 
 
 export const addTags = function (sequence : number, tags : string[]) {
-	return JPushInterface.addTags(sequence, tags);
+	JPushInterface.addTags(sequence, tags);
 }
 
 export const deleteTags = function (sequence : number, tags : string[]) {
-	return JPushInterface.deleteTags(sequence, tags);
+	JPushInterface.deleteTags(sequence, tags);
 }
 export const setTags = function (sequence : number, tags : string[]) {
-	return JPushInterface.setTags(sequence, tags);
+	JPushInterface.setTags(sequence, tags);
 }
 export const checkTagBindState = function (sequence : number, tag : string) {
-	return JPushInterface.checkTagBindState(sequence, tag);
+	JPushInterface.checkTagBindState(sequence, tag);
 }
 export const cleanTags = function (sequence : number) {
-	return JPushInterface.cleanTags(sequence);
+	JPushInterface.cleanTags(sequence);
 }
 export const getTags = function (sequence : number, curr : number) {
-	return JPushInterface.getTags(sequence, curr);
+	JPushInterface.getTags(sequence, curr);
 }
 export const setAlias = function (sequence : number, alias : string) {
-	return JPushInterface.setAlias(sequence, alias);
+	JPushInterface.setAlias(sequence, alias);
 }
 export const getAlias = function (sequence : number) {
-	return JPushInterface.getAlias(sequence);
+	JPushInterface.getAlias(sequence);
 }
 export const deleteAlias = function (sequence : number) {
-	return JPushInterface.deleteAlias(sequence);
+	JPushInterface.deleteAlias(sequence);
 }
 export const setMobileNumber = function (sequence : number, mobileNumber : string) {
-	return JPushInterface.setMobileNumber(sequence, mobileNumber);
+	JPushInterface.setMobileNumber(sequence, mobileNumber);
 }
 export const setBadgeNumber = function (badgeNumber : number) {
-	return JPushInterface.setBadgeNumber(badgeNumber);
+	JPushInterface.setBadgeNumber(badgeNumber);
 }
 
 
@@ -154,15 +154,15 @@ export const receiveExtraDataMessage = function (rNEAbility : RemoteNotification
 }
 
 export const setListWifi = function (enable : boolean) {
-	return JCollectControl.setListWifi(getContext() as common.ApplicationContext, enable);
+	JCollectControl.setListWifi(getContext() as common.ApplicationContext, enable);
 }
 
 export const setGPS = function (enable : boolean) {
-	return JCollectControl.setGPS(getContext() as common.ApplicationContext, enable);
+	JCollectControl.setGPS(getContext() as common.ApplicationContext, enable);
 }
 
 export const setEnableAppTerminate = function (enable : boolean) {
-	return JCollectControl.setEnableAppTerminate(getContext() as common.ApplicationContext, enable);
+	JCollectControl.setEnableAppTerminate(getContext() as common.ApplicationContext, enable);
 }
 /**
  * 更多插件开发的信息详见：https://uniapp.dcloud.net.cn/plugin/uts-plugin.html
