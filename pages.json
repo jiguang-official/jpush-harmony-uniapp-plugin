@@ -1,52 +1,17 @@
 {
-	"leftWindow": {
-		"path": "windows/left-window.vue",
-		"style": {
-			"width": "350px"
-		}
-	},
-	"topWindow": {
-		"path": "windows/top-window.vue",
-		"style": {
-			"height": "60px"
-		}
-	},
-	"pages": [
-		
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path" : "pages/push/push",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "uni-app"
 			}
 		}
-
-],
-	"subPackages": [
 	],
 	"globalStyle": {
-		"pageOrientation": "portrait",
-		"navigationBarTitleText": "Hello uniapp",
-		"navigationBarTextStyle": "white",
-		"navigationBarBackgroundColor": "#007AFF",
-		"backgroundColor": "#F8F8F8",
-		"backgroundColorTop": "#F4F5F6",
-		"backgroundColorBottom": "#F4F5F6",
-		"mp-360": {
-			"navigationStyle": "custom"
-		},
-		"h5": {
-			"maxWidth": 1190,
-			"navigationBarTextStyle": "black",
-			"navigationBarBackgroundColor": "#F1F1F1"
-		}
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
 	},
-	"tabBar": {
-		"color": "#7A7E83",
-		"selectedColor": "#007AFF",
-		"borderStyle": "black",
-		"backgroundColor": "#F8F8F8",
-		"list": [
-		]
-	}
+	"uniIdRouter": {}
 }

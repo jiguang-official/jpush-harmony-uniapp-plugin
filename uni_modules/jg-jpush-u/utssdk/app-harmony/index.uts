@@ -70,7 +70,7 @@ export const setChannel = function (channel : string) {
 
 export const init = function (context : common.UIAbilityContext | common.AbilityStageContext | undefined) {
 	if (undefined === context) {
-		context = getContext() as common.UIAbilityContext
+		context = UTSHarmony.getUIAbilityContext()
 	}
 	console.log(TAG, "init")
 	JPushInterface.init(context)
