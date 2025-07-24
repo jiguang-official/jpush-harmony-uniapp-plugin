@@ -3,7 +3,7 @@
  * 极光推送服务类，继承自JCommonService
  */
 
-import { JCommonService } from 'cn.jpush.android.service.JCommonService';
+import  JCommonService  from 'cn.jpush.android.service.JCommonService';
 
 /**
  * 推送服务类
@@ -12,5 +12,6 @@ import { JCommonService } from 'cn.jpush.android.service.JCommonService';
 export class PushService extends JCommonService {
     constructor() {
         super();
+        console.log("U-PushService", "constructor called");
     }
 } 
