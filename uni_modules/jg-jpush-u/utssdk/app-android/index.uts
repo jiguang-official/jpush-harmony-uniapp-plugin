@@ -1,95 +1,183 @@
-// *
-//  * 引用 Android 系统库，示例如下：
-//  * import { Context } from "android.content.Context";
-//  * [可选实现，按需引入]
-//  */
+import  JPushInterface  from 'cn.jpush.android.api.JPushInterface'
 
-// /* 引入 interface.uts 文件中定义的变量 */
-// import { MyApiOptions, MyApiResult, MyApi, MyApiSync } from '../interface.uts';
+const TAG = "JPUSH-uni-"
 
-// /* 引入 unierror.uts 文件中定义的变量 */
-// import { MyApiFailImpl } from '../unierror';
+export const init = function () {
+	console.log(TAG, "init")
+	JPushInterface.init(UTSAndroid.getAppContext())
+}
 
-// /**
-//  * 引入三方库
-//  * [可选实现，按需引入]
-//  *
-//  * 在 Android 平台引入三方库有以下两种方式：
-//  * 1、[推荐] 通过 仓储 方式引入，将 三方库的依赖信息 配置到 config.json 文件下的 dependencies 字段下。详细配置方式[详见](https://uniapp.dcloud.net.cn/plugin/uts-plugin.html#dependencies)
-//  * 2、直接引入，将 三方库的aar或jar文件 放到libs目录下。更多信息[详见](https://uniapp.dcloud.net.cn/plugin/uts-plugin.html#android%E5%B9%B3%E5%8F%B0%E5%8E%9F%E7%94%9F%E9%85%8D%E7%BD%AE)
-//  *
-//  * 在通过上述任意方式依赖三方库后，使用时需要在文件中 import，如下示例：
-//  * import { LottieAnimationView } from 'com.airbnb.lottie.LottieAnimationView'
-//  */
+export const setDebugMode = function (debug: boolean) {
+	console.log(TAG, "setDebugMode", debug)
+	JPushInterface.setDebugMode(debug)
+}
 
-// /**
-//  * UTSAndroid 为平台内置对象，不需要 import 可直接调用其API，[详见](https://uniapp.dcloud.net.cn/uts/utsandroid.html#utsandroid)
-//  */
+export const resumePush = function () {
+	console.log(TAG, "resumePush")
+	JPushInterface.resumePush(UTSAndroid.getAppContext())
+}
 
+export const stopPush = function () {
+	console.log(TAG, "stopPush")
+	JPushInterface.stopPush(UTSAndroid.getAppContext())
+}
 
-// /**
-//  * 异步方法
-//  *
-//  * uni-app项目中（vue/nvue）调用示例：
-//  * 1、引入方法声明 import { myApi } from "@/uni_modules/uts-api"
-//  * 2、方法调用
-//  * myApi({
-//  *   paramA: false,
-//  *   complete: (res) => {
-//  *      console.log(res)
-//  *   }
-//  * });
-//  * uni-app x项目（uvue）中调用示例：
-//  * 1、引入方法及参数声明 import { myApi, MyApiOptions } from "@/uni_modules/uts-api";
-//  * 2、方法调用
-//  * let options = {
-//  *   paramA: false,
-//  *   complete: (res : any) => {
-//  *     console.log(res)
-//  *   }
-//  * } as MyApiOptions;
-//  * myApi(options);
-//  *
-//  */
-// export const myApi : MyApi = function (options : MyApiOptions) {
-//   if (options.paramA == true) {
-//     // 返回数据
-//     const res : MyApiResult = {
-//       fieldA: 85,
-//       fieldB: true,
-//       fieldC: 'some message'
-//     };
-//     options.success?.(res);
-//     options.complete?.(res);
-//   } else {
-//     // 返回错误
-//     const err = new MyApiFailImpl(9010001);
-//     options.fail?.(err)
-//     options.complete?.(err)
-//   }
-// }
+export const isPushStopped = function (): boolean {
+	console.log(TAG, "isPushStopped")
+	return JPushInterface.isPushStopped(UTSAndroid.getAppContext())
+}
 
-// /**
-//  * 同步方法
-//  *
-//  * uni-app项目中（vue/nvue）调用示例：
-//  * 1、引入方法声明 import { myApiSync } from "@/uni_modules/uts-api"
-//  * 2、方法调用 myApiSync(true)
-//  *
-//  * uni-app x项目（uvue）中调用示例：
-//  * 1、引入方法及参数声明 import { myApiSync } from "@/uni_modules/uts-api";
-//  * 2、方法调用 myApiSync(true)
-//  */
-// export const myApiSync : MyApiSync = function (paramA : boolean) : MyApiResult {
-//   // 返回数据，根据插件功能获取实际的返回值
-//   const res : MyApiResult = {
-//     fieldA: 85,
-//     fieldB: paramA,
-//     fieldC: 'some message'
-//   };
-//   return res;
-// }
+export const setChannel = function (channel: string) {
+	console.log(TAG, "setChannel", channel)
+	JPushInterface.setChannel(UTSAndroid.getAppContext(), channel)
+}
 
-// /**
-//  * 更多插件开发的信息详见：https://uniapp.dcloud.net.cn/plugin/uts-plugin.html
+export const getRegistrationID = function (): string {
+	console.log(TAG, "getRegistrationID")
+	return JPushInterface.getRegistrationID(UTSAndroid.getAppContext())
+}
 
+export const getUdid = function (): string {
+	console.log(TAG, "getUdid")
+	return JPushInterface.getUdid(UTSAndroid.getAppContext())
+}
+
+export const setLatestNotificationNumber = function (maxNum: Int) {
+	console.log(TAG, "setLatestNotificationNumber", maxNum)
+	JPushInterface.setLatestNotificationNumber(UTSAndroid.getAppContext(), maxNum)
+}
+
+export const clearAllNotifications = function () {
+	console.log(TAG, "clearAllNotifications")
+	JPushInterface.clearAllNotifications(UTSAndroid.getAppContext())
+}
+
+export const clearNotificationById = function (notificationId: Int) {
+	console.log(TAG, "clearNotificationById", notificationId)
+	JPushInterface.clearNotificationById(UTSAndroid.getAppContext(), notificationId)
+}
+
+export const setTags = function (sequence: Int, tags: Set<string>) {
+	console.log(TAG, "setTags", sequence, tags)
+	JPushInterface.setTags(UTSAndroid.getAppContext(), sequence, tags)
+}
+
+export const addTags = function (sequence: Int, tags: Set<string>) {
+	console.log(TAG, "addTags", sequence, tags)
+	JPushInterface.addTags(UTSAndroid.getAppContext(), sequence, tags)
+}
+
+export const deleteTags = function (sequence: Int, tags: Set<string>) {
+	console.log(TAG, "deleteTags", sequence, tags)
+	JPushInterface.deleteTags(UTSAndroid.getAppContext(), sequence, tags)
+}
+
+export const cleanTags = function (sequence: Int) {
+	console.log(TAG, "cleanTags", sequence)
+	JPushInterface.cleanTags(UTSAndroid.getAppContext(), sequence)
+}
+
+export const getAllTags = function (sequence: Int) {
+	console.log(TAG, "getAllTags", sequence)
+	JPushInterface.getAllTags(UTSAndroid.getAppContext(), sequence)
+}
+
+export const checkTagBindState = function (sequence: Int, tag: string) {
+	console.log(TAG, "checkTagBindState", sequence, tag)
+	JPushInterface.checkTagBindState(UTSAndroid.getAppContext(), sequence, tag)
+}
+
+export const setAlias = function (sequence: Int, alias: string) {
+	console.log(TAG, "setAlias", sequence, alias)
+	JPushInterface.setAlias(UTSAndroid.getAppContext(), sequence, alias)
+}
+
+export const deleteAlias = function (sequence: Int) {
+	console.log(TAG, "deleteAlias", sequence)
+	JPushInterface.deleteAlias(UTSAndroid.getAppContext(), sequence)
+}
+
+export const getAlias = function (sequence: Int) {
+	console.log(TAG, "getAlias", sequence)
+	JPushInterface.getAlias(UTSAndroid.getAppContext(), sequence)
+}
+
+export const setMobileNumber = function (sequence: Int, mobileNumber: string) {
+	console.log(TAG, "setMobileNumber", sequence, mobileNumber)
+	JPushInterface.setMobileNumber(UTSAndroid.getAppContext(), sequence, mobileNumber)
+}
+
+export const onResume = function () {
+	console.log(TAG, "onResume")
+	JPushInterface.onResume(UTSAndroid.getAppContext())
+}
+
+export const onPause = function () {
+	console.log(TAG, "onPause")
+	JPushInterface.onPause(UTSAndroid.getAppContext())
+}
+
+export const onFragmentResume = function (fragmentName: string) {
+	console.log(TAG, "onFragmentResume", fragmentName)
+	JPushInterface.onFragmentResume(UTSAndroid.getAppContext(), fragmentName)
+}
+
+export const onFragmentPause = function (fragmentName: string) {
+	console.log(TAG, "onFragmentPause", fragmentName)
+	JPushInterface.onFragmentPause(UTSAndroid.getAppContext(), fragmentName)
+}
+
+export const onKillProcess = function () {
+	console.log(TAG, "onKillProcess")
+	JPushInterface.onKillProcess(UTSAndroid.getAppContext())
+}
+
+export const requestPermission = function () {
+	console.log(TAG, "requestPermission")
+	JPushInterface.requestPermission(UTSAndroid.getAppContext())
+}
+
+export const isNotificationEnabled = function (): number {
+	console.log(TAG, "isNotificationEnabled")
+	return JPushInterface.isNotificationEnabled(UTSAndroid.getAppContext())
+}
+
+export const goToAppNotificationSettings = function () {
+	console.log(TAG, "goToAppNotificationSettings")
+	JPushInterface.goToAppNotificationSettings(UTSAndroid.getAppContext())
+}
+
+export const setBadgeNumber = function (curNum: Int) {
+	console.log(TAG, "setBadgeNumber", curNum)
+	JPushInterface.setBadgeNumber(UTSAndroid.getAppContext(), curNum)
+}
+
+export const setSmartPushEnable = function (isEnable: boolean) {
+	console.log(TAG, "setSmartPushEnable", isEnable)
+	JPushInterface.setSmartPushEnable(UTSAndroid.getAppContext(), isEnable)
+}
+
+export const setGeofenceEnable = function (isEnable: boolean) {
+	console.log(TAG, "setGeofenceEnable", isEnable)
+	JPushInterface.setGeofenceEnable(UTSAndroid.getAppContext(), isEnable)
+}
+
+export const setDataInsightsEnable = function (isEnable: boolean) {
+	console.log(TAG, "setDataInsightsEnable", isEnable)
+	JPushInterface.setDataInsightsEnable(UTSAndroid.getAppContext(), isEnable)
+}
+
+export const setThirdPushEnable = function (enable: boolean) {
+	console.log(TAG, "setThirdPushEnable", enable)
+	JPushInterface.setThirdPushEnable(UTSAndroid.getAppContext(), enable)
+}
+
+export const setThirdToken = function (thidToken: string) {
+	console.log(TAG, "setThirdToken", thidToken)
+	JPushInterface.setThirdToken(UTSAndroid.getAppContext(), thidToken)
+}
+
+export const setHeartbeatInterval = function (heartbeatInterval: Int) {
+	console.log(TAG, "setHeartbeatInterval", heartbeatInterval)
+	JPushInterface.setHeartbeatInterval(UTSAndroid.getAppContext(), heartbeatInterval)
+}

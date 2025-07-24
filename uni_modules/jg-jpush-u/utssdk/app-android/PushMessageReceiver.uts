@@ -1,0 +1,205 @@
+/**
+ * PushMessageReceiver.uts
+ * 极光推送消息接收器，继承自JPushMessageReceiver
+ */
+
+import { Context } from 'android.content.Context';
+import { Intent } from 'android.content.Intent';
+import { Log } from 'android.util.Log';
+
+import { 
+    CmdMessage, 
+    CustomMessage, 
+    JPushInterface, 
+    JPushMessage, 
+    NotificationMessage 
+} from 'cn.jpush.android.api';
+import { JPushMessageReceiver } from 'cn.jpush.android.service.JPushMessageReceiver';
+
+/**
+ * 推送消息接收器类
+ * 继承自极光推送的JPushMessageReceiver
+ */
+export class PushMessageReceiver extends JPushMessageReceiver {
+    private static readonly TAG: string = "U-PushMessageReceiver";
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * 收到自定义消息
+     */
+    onMessage(context: Context, customMessage: CustomMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onMessage] " + customMessage.toString());
+    }
+
+    /**
+     * 属性操作结果回调
+     */
+    onPropertyOperatorResult(context: Context, jPushMessage: JPushMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onPropertyOperatorResult] " + jPushMessage.toString());
+    }
+
+    /**
+     * 通知点击回调
+     */
+    onNotifyMessageOpened(context: Context, message: NotificationMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onNotifyMessageOpened] " + message.toString());
+        super.onNotifyMessageOpened(context, message);
+    }
+
+    /**
+     * 通知展示回调
+     */
+    onNotifyMessageArrived(context: Context, message: NotificationMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onNotifyMessageArrived] " + message.toString());
+        super.onNotifyMessageArrived(context, message);
+    }
+
+    /**
+     * 通知被清除回调
+     */
+    onNotifyMessageDismiss(context: Context, message: NotificationMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onNotifyMessageDismiss] " + message.toString());
+    }
+
+    /**
+     * 注册ID回调
+     */
+    onRegister(context: Context, registrationId: string): void {
+        Log.e(PushMessageReceiver.TAG, "[onRegister] " + registrationId);
+    }
+
+    /**
+     * 连接状态回调
+     */
+    onConnected(context: Context, isConnected: boolean): void {
+        Log.e(PushMessageReceiver.TAG, "[onConnected] " + isConnected);
+    }
+
+    /**
+     * 命令结果回调
+     */
+    onCommandResult(context: Context, cmdMessage: CmdMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onCommandResult] " + cmdMessage.toString());
+    }
+
+    /**
+     * 标签操作结果回调
+     */
+    onTagOperatorResult(context: Context, jPushMessage: JPushMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onTagOperatorResult] " + jPushMessage.toString());
+        // TagAliasOperatorHelper.getInstance().onTagOperatorResult(context, jPushMessage);
+        super.onTagOperatorResult(context, jPushMessage);
+    }
+
+    /**
+     * 检查标签操作结果回调
+     */
+    onCheckTagOperatorResult(context: Context, jPushMessage: JPushMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onCheckTagOperatorResult] " + jPushMessage.toString());
+        // TagAliasOperatorHelper.getInstance().onCheckTagOperatorResult(context, jPushMessage);
+        super.onCheckTagOperatorResult(context, jPushMessage);
+    }
+
+    /**
+     * 别名操作结果回调
+     */
+    onAliasOperatorResult(context: Context, jPushMessage: JPushMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onAliasOperatorResult] " + jPushMessage.toString());
+        // TagAliasOperatorHelper.getInstance().onAliasOperatorResult(context, jPushMessage);
+        super.onAliasOperatorResult(context, jPushMessage);
+    }
+
+    /**
+     * 手机号操作结果回调
+     */
+    onMobileNumberOperatorResult(context: Context, jPushMessage: JPushMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onMobileNumberOperatorResult] " + jPushMessage.toString());
+        // TagAliasOperatorHelper.getInstance().onMobileNumberOperatorResult(context, jPushMessage);
+        super.onMobileNumberOperatorResult(context, jPushMessage);
+    }
+
+    /**
+     * 通知设置检查回调
+     */
+    onNotificationSettingsCheck(context: Context, isOn: boolean, source: number): void {
+        super.onNotificationSettingsCheck(context, isOn, source);
+        Log.e(PushMessageReceiver.TAG, "[onNotificationSettingsCheck] isOn:" + isOn + ",source:" + source);
+    }
+
+    /**
+     * 是否需要显示通知
+     */
+    isNeedShowNotification(context: Context, notificationMessage: NotificationMessage, processName: string): boolean {
+        return false;
+    }
+
+    /**
+     * 通知未显示回调
+     */
+    onNotifyMessageUnShow(context: Context, message: NotificationMessage): void {
+        super.onNotifyMessageUnShow(context, message);
+        Log.e(PushMessageReceiver.TAG, "[onNotifyMessageUnShow] message:" + message.toString());
+    }
+
+    /**
+     * 应用内消息展示回调
+     */
+    onInAppMessageShow(context: Context, message: NotificationMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onInAppMessageShow], " + message.toString());
+    }
+
+    /**
+     * 应用内消息点击回调
+     */
+    onInAppMessageClick(context: Context, message: NotificationMessage): void {
+        Log.e(PushMessageReceiver.TAG, "[onInAppMessageClick], " + message.toString());
+    }
+
+    /**
+     * 拉取地理围栏列表的回调
+     */
+    onGeofenceReceived(context: Context, geofences: string): void {
+        Log.e(PushMessageReceiver.TAG, "onGeofenceReceived: " + geofences);
+        if (geofences && geofences.length > 0) {
+            // 正常拉取到地理围栏
+        } else {
+            // 拉取到围栏列表为空，表示当前状态无围栏业务
+        }
+    }
+
+    /**
+     * 多操作按钮点击回调
+     */
+    onMultiActionClicked(context: Context, intent: Intent): void {
+        Log.e(PushMessageReceiver.TAG, "[onMultiActionClicked] 用户点击了通知栏按钮");
+        const extras = intent.getExtras();
+        if (extras) {
+            const nActionExtra = extras.getString(JPushInterface.EXTRA_NOTIFICATION_ACTION_EXTRA);
+            
+            if (!nActionExtra) {
+                Log.d(PushMessageReceiver.TAG, "ACTION_NOTIFICATION_CLICK_ACTION nActionExtra is null");
+                return;
+            }
+            
+            if (nActionExtra === "my_extra1") {
+                Log.e(PushMessageReceiver.TAG, "[onMultiActionClicked] 用户点击通知栏按钮一");
+            } else if (nActionExtra === "my_extra2") {
+                Log.e(PushMessageReceiver.TAG, "[onMultiActionClicked] 用户点击通知栏按钮二");
+            } else if (nActionExtra === "my_extra3") {
+                Log.e(PushMessageReceiver.TAG, "[onMultiActionClicked] 用户点击通知栏按钮三");
+            } else {
+                Log.e(PushMessageReceiver.TAG, "[onMultiActionClicked] 用户点击通知栏按钮未定义");
+            }
+        }
+    }
+
+    /**
+     * 触发地理围栏回调
+     */
+    onGeofenceRegion(context: Context, geofence: string, longitude: number, latitude: number): void {
+        Log.e(PushMessageReceiver.TAG, "onGeofenceRegion: " + geofence);
+    }
+} 
