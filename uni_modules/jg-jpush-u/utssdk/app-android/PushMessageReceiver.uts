@@ -6,12 +6,17 @@
 import  Context  from 'android.content.Context';
 import  Intent  from 'android.content.Intent';
 import  Log  from 'android.util.Log';
+import Bundle from 'android.os.Bundle';
 
 import CmdMessage from 'cn.jpush.android.api.CmdMessage';
 import CustomMessage from 'cn.jpush.android.api.CustomMessage';
 import JPushMessage from 'cn.jpush.android.api.JPushMessage';
 import NotificationMessage from 'cn.jpush.android.api.NotificationMessage';
 import JPushMessageReceiver  from 'cn.jpush.android.service.JPushMessageReceiver';
+import JSONObject from 'org.json.JSONObject';
+
+// 导入事件回调管理器
+import { eventCallbackManager } from './index.uts';
 
 /**
  * 推送消息接收器类
@@ -24,6 +29,153 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         super();
         Log.e(PushMessageReceiver.TAG, "PushMessageReceiver constructor called");
     }
+    
+    /**
+     * 将JPushMessage转换为JSON字符串
+     */
+    private convertJPushMessageToJson(jPushMessage: JPushMessage): string {
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("alias", jPushMessage.getAlias());
+            jsonObject.put("tags", jPushMessage.getTags());
+            jsonObject.put("pros", jPushMessage.getPros());
+            jsonObject.put("checkTag", jPushMessage.getCheckTag());
+            jsonObject.put("errorCode", jPushMessage.getErrorCode());
+            jsonObject.put("tagCheckStateResult", jPushMessage.getTagCheckStateResult());
+            jsonObject.put("isTagCheckOperator", jPushMessage.isTagCheckOperator());
+            jsonObject.put("sequence", jPushMessage.getSequence());
+            jsonObject.put("mobileNumber", jPushMessage.getMobileNumber());
+            jsonObject.put("protoType", jPushMessage.getProtoType());
+            jsonObject.put("action", jPushMessage.getAction());
+            return jsonObject.toString();
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "convertJPushMessageToJson error: " + e.toString());
+            return "{}";
+        }
+    }
+    
+    /**
+     * 将CustomMessage转换为JSON字符串
+     */
+    private convertCustomMessageToJson(customMessage: CustomMessage): string {
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("messageId", customMessage.messageId);
+            jsonObject.put("extra", customMessage.extra);
+            jsonObject.put("message", customMessage.message);
+            jsonObject.put("contentType", customMessage.contentType);
+            jsonObject.put("title", customMessage.title);
+            jsonObject.put("senderId", customMessage.senderId);
+            jsonObject.put("appId", customMessage.appId);
+            jsonObject.put("platform", customMessage.platform);
+            return jsonObject.toString();
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "convertCustomMessageToJson error: " + e.toString());
+            return "{}";
+        }
+    }
+    
+    /**
+     * 将NotificationMessage转换为JSON字符串
+     */
+    private convertNotificationMessageToJson(message: NotificationMessage): string {
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("appkey", message.appkey);
+            jsonObject.put("msgId", message.msgId);
+            jsonObject.put("notificationContent", message.notificationContent);
+            jsonObject.put("notificationAlertType", message.notificationAlertType);
+            jsonObject.put("notificationTitle", message.notificationTitle);
+            jsonObject.put("notificationSmallIcon", message.notificationSmallIcon);
+            jsonObject.put("notificationLargeIcon", message.notificationLargeIcon);
+            jsonObject.put("notificationExtras", message.notificationExtras);
+            jsonObject.put("notificationStyle", message.notificationStyle);
+            jsonObject.put("notificationBuilderId", message.notificationBuilderId);
+            jsonObject.put("notificationBigText", message.notificationBigText);
+            jsonObject.put("notificationBigPicPath", message.notificationBigPicPath);
+            jsonObject.put("notificationInbox", message.notificationInbox);
+            jsonObject.put("notificationPriority", message.notificationPriority);
+            jsonObject.put("notificationImportance", message.notificationImportance);
+            jsonObject.put("notificationCategory", message.notificationCategory);
+            jsonObject.put("notificationId", message.notificationId);
+            jsonObject.put("developerArg0", message.developerArg0);
+            jsonObject.put("platform", message.platform);
+            jsonObject.put("appId", message.appId);
+            jsonObject.put("notificationType", message.notificationType);
+            jsonObject.put("notificationChannelId", message.notificationChannelId);
+            jsonObject.put("displayForeground", message.displayForeground);
+            jsonObject.put("_webPagePath", message._webPagePath);
+            jsonObject.put("isRichPush", message.isRichPush);
+            jsonObject.put("richType", message.richType);
+            jsonObject.put("deeplink", message.deeplink);
+            jsonObject.put("failedAction", message.failedAction);
+            jsonObject.put("failedLink", message.failedLink);
+            jsonObject.put("targetPkgName", message.targetPkgName);
+            jsonObject.put("sspWxAppId", message.sspWxAppId);
+            jsonObject.put("sspWmOriginId", message.sspWmOriginId);
+            jsonObject.put("sspWmType", message.sspWmType);
+            jsonObject.put("isWmDeepLink", message.isWmDeepLink);
+            jsonObject.put("inAppMsgType", message.inAppMsgType);
+            jsonObject.put("inAppMsgShowType", message.inAppMsgShowType);
+            jsonObject.put("inAppMsgShowPos", message.inAppMsgShowPos);
+            jsonObject.put("inAppMsgTitle", message.inAppMsgTitle);
+            jsonObject.put("inAppMsgContentBody", message.inAppMsgContentBody);
+            jsonObject.put("inAppType", message.inAppType);
+            jsonObject.put("inAppShowTarget", message.inAppShowTarget);
+            jsonObject.put("inAppClickAction", message.inAppClickAction);
+            jsonObject.put("inAppExtras", message.inAppExtras);
+            return jsonObject.toString();
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "convertNotificationMessageToJson error: " + e.toString());
+            return "{}";
+        }
+    }
+    
+    /**
+     * 将CmdMessage转换为JSON字符串
+     */
+    private convertCmdMessageToJson(cmdMessage: CmdMessage): string {
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("cmd", cmdMessage.cmd);
+            jsonObject.put("errorCode", cmdMessage.errorCode);
+            jsonObject.put("msg", cmdMessage.msg);
+            jsonObject.put("extra", cmdMessage.extra);
+            return jsonObject.toString();
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "convertCmdMessageToJson error: " + e.toString());
+            return "{}";
+        }
+    }
+    
+    /**
+     * 将Bundle转换为JSONObject
+     */
+    private convertBundleToJson(bundle: Bundle | null): JSONObject {
+        try {
+            const jsonObject = new JSONObject();
+            if (bundle != null) {
+                const keySet = bundle.keySet();
+                for (let key of keySet) {
+                    jsonObject.put(key, bundle.get(key));
+                }
+            }
+            return jsonObject;
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "convertBundleToJson error: " + e.toString());
+            return new JSONObject();
+        }
+    }
+    
+    /**
+     * 触发事件回调的通用方法
+     */
+    private triggerEventCallback(eventName: string, eventData: string): void {
+        eventCallbackManager.triggerCallBack({
+            eventName: eventName,
+            eventData: eventData
+        });
+    }
 
     /**
      * 收到自定义消息
@@ -31,6 +183,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onMessage(context: Context, customMessage: CustomMessage): void {
         super.onMessage(context, customMessage);
         Log.e(PushMessageReceiver.TAG, "[onMessage] " + customMessage.toString());
+        
+        // 触发自定义消息回调
+        this.triggerEventCallback('onMessage', this.convertCustomMessageToJson(customMessage));
     }
 
     /**
@@ -39,6 +194,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onPropertyOperatorResult(context: Context, jPushMessage: JPushMessage): void {
         super.onPropertyOperatorResult(context, jPushMessage);
         Log.e(PushMessageReceiver.TAG, "[onPropertyOperatorResult] " + jPushMessage.toString());
+        
+        // 触发属性操作结果回调
+        this.triggerEventCallback('onPropertyOperatorResult', this.convertJPushMessageToJson(jPushMessage));
     }
 
     /**
@@ -47,6 +205,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onNotifyMessageOpened(context: Context, message: NotificationMessage): void {
         Log.e(PushMessageReceiver.TAG, "[onNotifyMessageOpened] " + message.toString());
         super.onNotifyMessageOpened(context, message);
+        
+        // 触发通知点击回调
+        this.triggerEventCallback('onNotifyMessageOpened', this.convertNotificationMessageToJson(message));
     }
 
     /**
@@ -55,6 +216,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onNotifyMessageArrived(context: Context, message: NotificationMessage): void {
         Log.e(PushMessageReceiver.TAG, "[onNotifyMessageArrived] " + message.toString());
         super.onNotifyMessageArrived(context, message);
+        
+        // 触发通知展示回调
+        this.triggerEventCallback('onNotifyMessageArrived', this.convertNotificationMessageToJson(message));
     }
 
     /**
@@ -63,6 +227,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onNotifyMessageDismiss(context: Context, message: NotificationMessage): void {
         super.onNotifyMessageDismiss(context, message);
         Log.e(PushMessageReceiver.TAG, "[onNotifyMessageDismiss] " + message.toString());
+        
+        // 触发通知被清除回调
+        this.triggerEventCallback('onNotifyMessageDismiss', this.convertNotificationMessageToJson(message));
     }
 
     /**
@@ -71,6 +238,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onRegister(context: Context, registrationId: string): void {
         super.onRegister(context, registrationId);
         Log.e(PushMessageReceiver.TAG, "[onRegister] " + registrationId);
+        
+        // 触发注册回调
+        this.triggerEventCallback('onRegister', registrationId);
     }
 
     /**
@@ -79,6 +249,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onConnected(context: Context, isConnected: boolean): void {
         super.onConnected(context, isConnected);
         Log.e(PushMessageReceiver.TAG, "[onConnected] " + isConnected);
+        
+        // 触发连接状态回调
+        this.triggerEventCallback('onConnected', isConnected.toString());
     }
 
     /**
@@ -87,6 +260,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onCommandResult(context: Context, cmdMessage: CmdMessage): void {
         super.onCommandResult(context, cmdMessage);
         Log.e(PushMessageReceiver.TAG, "[onCommandResult] " + cmdMessage.toString());
+        
+        // 触发命令结果回调
+        this.triggerEventCallback('onCommandResult', this.convertCmdMessageToJson(cmdMessage));
     }
 
     /**
@@ -96,6 +272,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         Log.e(PushMessageReceiver.TAG, "[onTagOperatorResult] " + jPushMessage.toString());
         // TagAliasOperatorHelper.getInstance().onTagOperatorResult(context, jPushMessage);
         super.onTagOperatorResult(context, jPushMessage);
+        
+        // 触发标签操作结果回调
+        this.triggerEventCallback('onTagOperatorResult', this.convertJPushMessageToJson(jPushMessage));
     }
 
     /**
@@ -105,6 +284,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         Log.e(PushMessageReceiver.TAG, "[onCheckTagOperatorResult] " + jPushMessage.toString());
         // TagAliasOperatorHelper.getInstance().onCheckTagOperatorResult(context, jPushMessage);
         super.onCheckTagOperatorResult(context, jPushMessage);
+        
+        // 触发检查标签操作结果回调
+        this.triggerEventCallback('onCheckTagOperatorResult', this.convertJPushMessageToJson(jPushMessage));
     }
 
     /**
@@ -114,6 +296,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         Log.e(PushMessageReceiver.TAG, "[onAliasOperatorResult] " + jPushMessage.toString());
         // TagAliasOperatorHelper.getInstance().onAliasOperatorResult(context, jPushMessage);
         super.onAliasOperatorResult(context, jPushMessage);
+        
+        // 触发别名操作结果回调
+        this.triggerEventCallback('onAliasOperatorResult', this.convertJPushMessageToJson(jPushMessage));
     }
 
     /**
@@ -123,14 +308,28 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         super.onMobileNumberOperatorResult(context, jPushMessage);
         Log.e(PushMessageReceiver.TAG, "[onMobileNumberOperatorResult] " + jPushMessage.toString());
         // TagAliasOperatorHelper.getInstance().onMobileNumberOperatorResult(context, jPushMessage);
+        
+        // 触发手机号操作结果回调
+        this.triggerEventCallback('onMobileNumberOperatorResult', this.convertJPushMessageToJson(jPushMessage));
     }
 
     /**
      * 通知设置检查回调
      */
-    override onNotificationSettingsCheck(context: Context, isOn: boolean, source: number): void {
+    override onNotificationSettingsCheck(context: Context, isOn: boolean, source: Int): void {
         super.onNotificationSettingsCheck(context, isOn, source);
         Log.e(PushMessageReceiver.TAG, "[onNotificationSettingsCheck] isOn:" + isOn + ",source:" + source);
+        
+        // 触发通知设置检查回调
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("isOn", isOn);
+            jsonObject.put("source", source);
+            this.triggerEventCallback('onNotificationSettingsCheck', jsonObject.toString());
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "onNotificationSettingsCheck JSON error: " + e.toString());
+            this.triggerEventCallback('onNotificationSettingsCheck', '{"isOn":false,"source":0}');
+        }
     }
 
     /**
@@ -146,6 +345,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onNotifyMessageUnShow(context: Context, message: NotificationMessage): void {
         super.onNotifyMessageUnShow(context, message);
         Log.e(PushMessageReceiver.TAG, "[onNotifyMessageUnShow] message:" + message.toString());
+        
+        // 触发通知未显示回调
+        this.triggerEventCallback('onNotifyMessageUnShow', this.convertNotificationMessageToJson(message));
     }
 
     /**
@@ -154,6 +356,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onInAppMessageShow(context: Context, message: NotificationMessage): void {
         super.onInAppMessageShow(context, message);
         Log.e(PushMessageReceiver.TAG, "[onInAppMessageShow], " + message.toString());
+        
+        // 触发应用内消息展示回调
+        this.triggerEventCallback('onInAppMessageShow', this.convertNotificationMessageToJson(message));
     }
 
     /**
@@ -162,6 +367,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onInAppMessageClick(context: Context, message: NotificationMessage): void {
         super.onInAppMessageClick(context, message);
         Log.e(PushMessageReceiver.TAG, "[onInAppMessageClick], " + message.toString());
+        
+        // 触发应用内消息点击回调
+        this.triggerEventCallback('onInAppMessageClick', this.convertNotificationMessageToJson(message));
     }
 
     /**
@@ -170,6 +378,9 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onGeofenceReceived(context: Context, geofences: string): void {
         super.onGeofenceReceived(context, geofences);
         Log.e(PushMessageReceiver.TAG, "onGeofenceReceived: " + geofences);
+        
+        // 触发地理围栏列表回调
+        this.triggerEventCallback('onGeofenceReceived', geofences);
     }
 
     /**
@@ -178,13 +389,36 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onMultiActionClicked(context: Context, intent: Intent): void {
         super.onMultiActionClicked(context, intent);
         Log.e(PushMessageReceiver.TAG, "[onMultiActionClicked] 用户点击了通知栏按钮");
+        
+        // 触发多操作按钮点击回调
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("action", intent.getAction());
+            jsonObject.put("extras", this.convertBundleToJson(intent.getExtras()));
+            this.triggerEventCallback('onMultiActionClicked', jsonObject.toString());
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "onMultiActionClicked JSON error: " + e.toString());
+            this.triggerEventCallback('onMultiActionClicked', '{"action":"","extras":{}}');
+        }
     }
 
     /**
      * 触发地理围栏回调
      */
-    override onGeofenceRegion(context: Context, geofence: string, longitude: number, latitude: number): void {
+    override onGeofenceRegion(context: Context, geofence: string, longitude: Double, latitude: Double): void {
         super.onGeofenceRegion(context, geofence, longitude, latitude);
         Log.e(PushMessageReceiver.TAG, "onGeofenceRegion: " + geofence);
+        
+        // 触发地理围栏回调
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("geofence", geofence);
+            jsonObject.put("longitude", longitude);
+            jsonObject.put("latitude", latitude);
+            this.triggerEventCallback('onGeofenceRegion', jsonObject.toString());
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "onGeofenceRegion JSON error: " + e.toString());
+            this.triggerEventCallback('onGeofenceRegion', '{"geofence":"","longitude":0,"latitude":0}');
+        }
     }
 } 

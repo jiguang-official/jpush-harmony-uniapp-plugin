@@ -1,13 +1,65 @@
-import  JPushInterface  from 'cn.jpush.android.api.JPushInterface'
+import JPushInterface from 'cn.jpush.android.api.JPushInterface'
+
+export * from './PushMessageReceiver.uts'
+export { PushService } from "./PushService.uts"
+
+
+/* 引入 interface.uts 文件中定义的变量 */
+import { EventCallBackParams, EventCallBack } from '../interface.uts';
 
 const TAG = "JPUSH-uni-"
+
+// 事件回调管理类
+class EventCallbackManager {
+	private callBack : EventCallBackParams | null = null
+	private cachedEvents : Array<EventCallBack> = []
+
+	setEventCallBack(param : EventCallBackParams) : void {
+		console.log(TAG, "setEventCallBack")
+		this.callBack = param
+
+		// 如果有缓存的事件，立即回调
+		if (this.cachedEvents.length > 0) {
+			console.log(TAG, "处理缓存事件，数量:", this.cachedEvents.length)
+			for (let event of this.cachedEvents) {
+				this.triggerCallBack(event)
+			}
+			this.cachedEvents = []
+		}
+	}
+
+	triggerCallBack(event : EventCallBack) : void {
+		if (this.callBack !== null) {
+			console.log(TAG, "触发回调")
+			if (this.callBack.callback !== undefined) {
+				this.callBack.callback?.(event)
+			} else {
+				console.log(TAG, "未设置回调函数，事件内容：", event)
+			}
+		} else {
+			console.log(TAG, "回调未设置，缓存事件")
+			this.cachedEvents.push(event)
+		}
+	}
+
+	getCallBack() : EventCallBackParams | null {
+		return this.callBack
+	}
+
+	hasCallBack() : boolean {
+		return this.callBack !== null && this.callBack.callback !== null
+	}
+}
+
+// 全局事件回调管理器实例
+export const eventCallbackManager = new EventCallbackManager()
 
 export const init = function () {
 	console.log(TAG, "init")
 	JPushInterface.init(UTSAndroid.getAppContext())
 }
 
-export const setDebugMode = function (debug: boolean) {
+export const setDebugMode = function (debug : boolean) {
 	console.log(TAG, "setDebugMode", debug)
 	JPushInterface.setDebugMode(debug)
 }
@@ -22,27 +74,27 @@ export const stopPush = function () {
 	JPushInterface.stopPush(UTSAndroid.getAppContext())
 }
 
-export const isPushStopped = function (): boolean {
+export const isPushStopped = function () : boolean {
 	console.log(TAG, "isPushStopped")
 	return JPushInterface.isPushStopped(UTSAndroid.getAppContext())
 }
 
-export const setChannel = function (channel: string) {
+export const setChannel = function (channel : string) {
 	console.log(TAG, "setChannel", channel)
 	JPushInterface.setChannel(UTSAndroid.getAppContext(), channel)
 }
 
-export const getRegistrationID = function (): string {
+export const getRegistrationID = function () : string {
 	console.log(TAG, "getRegistrationID")
 	return JPushInterface.getRegistrationID(UTSAndroid.getAppContext())
 }
 
-export const getUdid = function (): string {
+export const getUdid = function () : string {
 	console.log(TAG, "getUdid")
 	return JPushInterface.getUdid(UTSAndroid.getAppContext())
 }
 
-export const setLatestNotificationNumber = function (maxNum: Int) {
+export const setLatestNotificationNumber = function (maxNum : Int) {
 	console.log(TAG, "setLatestNotificationNumber", maxNum)
 	JPushInterface.setLatestNotificationNumber(UTSAndroid.getAppContext(), maxNum)
 }
@@ -52,57 +104,57 @@ export const clearAllNotifications = function () {
 	JPushInterface.clearAllNotifications(UTSAndroid.getAppContext())
 }
 
-export const clearNotificationById = function (notificationId: Int) {
+export const clearNotificationById = function (notificationId : Int) {
 	console.log(TAG, "clearNotificationById", notificationId)
 	JPushInterface.clearNotificationById(UTSAndroid.getAppContext(), notificationId)
 }
 
-export const setTags = function (sequence: Int, tags: Set<string>) {
+export const setTags = function (sequence : Int, tags : Set<string>) {
 	console.log(TAG, "setTags", sequence, tags)
 	JPushInterface.setTags(UTSAndroid.getAppContext(), sequence, tags)
 }
 
-export const addTags = function (sequence: Int, tags: Set<string>) {
+export const addTags = function (sequence : Int, tags : Set<string>) {
 	console.log(TAG, "addTags", sequence, tags)
 	JPushInterface.addTags(UTSAndroid.getAppContext(), sequence, tags)
 }
 
-export const deleteTags = function (sequence: Int, tags: Set<string>) {
+export const deleteTags = function (sequence : Int, tags : Set<string>) {
 	console.log(TAG, "deleteTags", sequence, tags)
 	JPushInterface.deleteTags(UTSAndroid.getAppContext(), sequence, tags)
 }
 
-export const cleanTags = function (sequence: Int) {
+export const cleanTags = function (sequence : Int) {
 	console.log(TAG, "cleanTags", sequence)
 	JPushInterface.cleanTags(UTSAndroid.getAppContext(), sequence)
 }
 
-export const getAllTags = function (sequence: Int) {
+export const getAllTags = function (sequence : Int) {
 	console.log(TAG, "getAllTags", sequence)
 	JPushInterface.getAllTags(UTSAndroid.getAppContext(), sequence)
 }
 
-export const checkTagBindState = function (sequence: Int, tag: string) {
+export const checkTagBindState = function (sequence : Int, tag : string) {
 	console.log(TAG, "checkTagBindState", sequence, tag)
 	JPushInterface.checkTagBindState(UTSAndroid.getAppContext(), sequence, tag)
 }
 
-export const setAlias = function (sequence: Int, alias: string) {
+export const setAlias = function (sequence : Int, alias : string) {
 	console.log(TAG, "setAlias", sequence, alias)
 	JPushInterface.setAlias(UTSAndroid.getAppContext(), sequence, alias)
 }
 
-export const deleteAlias = function (sequence: Int) {
+export const deleteAlias = function (sequence : Int) {
 	console.log(TAG, "deleteAlias", sequence)
 	JPushInterface.deleteAlias(UTSAndroid.getAppContext(), sequence)
 }
 
-export const getAlias = function (sequence: Int) {
+export const getAlias = function (sequence : Int) {
 	console.log(TAG, "getAlias", sequence)
 	JPushInterface.getAlias(UTSAndroid.getAppContext(), sequence)
 }
 
-export const setMobileNumber = function (sequence: Int, mobileNumber: string) {
+export const setMobileNumber = function (sequence : Int, mobileNumber : string) {
 	console.log(TAG, "setMobileNumber", sequence, mobileNumber)
 	JPushInterface.setMobileNumber(UTSAndroid.getAppContext(), sequence, mobileNumber)
 }
@@ -117,12 +169,12 @@ export const onPause = function () {
 	JPushInterface.onPause(UTSAndroid.getAppContext())
 }
 
-export const onFragmentResume = function (fragmentName: string) {
+export const onFragmentResume = function (fragmentName : string) {
 	console.log(TAG, "onFragmentResume", fragmentName)
 	JPushInterface.onFragmentResume(UTSAndroid.getAppContext(), fragmentName)
 }
 
-export const onFragmentPause = function (fragmentName: string) {
+export const onFragmentPause = function (fragmentName : string) {
 	console.log(TAG, "onFragmentPause", fragmentName)
 	JPushInterface.onFragmentPause(UTSAndroid.getAppContext(), fragmentName)
 }
@@ -137,7 +189,7 @@ export const requestPermission = function () {
 	JPushInterface.requestPermission(UTSAndroid.getAppContext())
 }
 
-export const isNotificationEnabled = function (): number {
+export const isNotificationEnabled = function () : number {
 	console.log(TAG, "isNotificationEnabled")
 	return JPushInterface.isNotificationEnabled(UTSAndroid.getAppContext())
 }
@@ -147,37 +199,41 @@ export const goToAppNotificationSettings = function () {
 	JPushInterface.goToAppNotificationSettings(UTSAndroid.getAppContext())
 }
 
-export const setBadgeNumber = function (curNum: Int) {
+export const setBadgeNumber = function (curNum : Int) {
 	console.log(TAG, "setBadgeNumber", curNum)
 	JPushInterface.setBadgeNumber(UTSAndroid.getAppContext(), curNum)
 }
 
-export const setSmartPushEnable = function (isEnable: boolean) {
+export const setSmartPushEnable = function (isEnable : boolean) {
 	console.log(TAG, "setSmartPushEnable", isEnable)
 	JPushInterface.setSmartPushEnable(UTSAndroid.getAppContext(), isEnable)
 }
 
-export const setGeofenceEnable = function (isEnable: boolean) {
+export const setGeofenceEnable = function (isEnable : boolean) {
 	console.log(TAG, "setGeofenceEnable", isEnable)
 	JPushInterface.setGeofenceEnable(UTSAndroid.getAppContext(), isEnable)
 }
 
-export const setDataInsightsEnable = function (isEnable: boolean) {
+export const setDataInsightsEnable = function (isEnable : boolean) {
 	console.log(TAG, "setDataInsightsEnable", isEnable)
 	JPushInterface.setDataInsightsEnable(UTSAndroid.getAppContext(), isEnable)
 }
 
-export const setThirdPushEnable = function (enable: boolean) {
+export const setThirdPushEnable = function (enable : boolean) {
 	console.log(TAG, "setThirdPushEnable", enable)
 	JPushInterface.setThirdPushEnable(UTSAndroid.getAppContext(), enable)
 }
 
-export const setThirdToken = function (thidToken: string) {
+export const setThirdToken = function (thidToken : string) {
 	console.log(TAG, "setThirdToken", thidToken)
 	JPushInterface.setThirdToken(UTSAndroid.getAppContext(), thidToken)
 }
 
-export const setHeartbeatInterval = function (heartbeatInterval: Int) {
+export const setHeartbeatInterval = function (heartbeatInterval : Int) {
 	console.log(TAG, "setHeartbeatInterval", heartbeatInterval)
 	JPushInterface.setHeartbeatInterval(UTSAndroid.getAppContext(), heartbeatInterval)
+}
+
+export function setEventCallBack(param : EventCallBackParams) : void {
+	eventCallbackManager.setEventCallBack(param)
 }
