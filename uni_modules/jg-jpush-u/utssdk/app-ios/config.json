@@ -1,3 +1,20 @@
 {
-  "deploymentTarget": "12"
+	"frameworks": [
+			"UIKit.framework",
+			"CFNetwork.framework",
+			"CoreFoundation.framework",
+			"CoreTelephony.framework",
+			"SystemConfiguration.framework",
+			"CoreGraphics.framework",
+			"Foundation.framework",
+			"Security.framework",
+			"UserNotifications.framework",
+			"AdSupport.framework",
+			"WebKit.framework",
+			"AppTrackingTransparency.framework",
+			"StoreKit.framework",
+			"libz.tbd",
+			"libresolv.tbd"
+		],
+  "deploymentTarget": "10"
 }

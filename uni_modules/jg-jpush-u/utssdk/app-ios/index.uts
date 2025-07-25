@@ -1,85 +1,238 @@
-// *
-//  * 引用 iOS 系统库，示例如下：
-//  * import { UIDevice } from "UIKit";
-//  * [可选实现，按需引入]
-//  */
+import { Data } from 'Assignables';
+import { App } from 'MarketplaceKit';
+import { Notification } from 'Foundation';
+import { Dictionary, Set, Error} from 'Swift';
+import { NSError } from 'Foundation';
+import { NSSet } from 'Foundation';
+import { UIDevice } from 'UIKit';
+import { ATTrackingManager, ATTrackingManagerAuthorizationStatus } from 'AppTrackingTransparency';
+import { ASIdentifierManager } from 'AdSupport';
+import { NotificationCenter } from 'Foundation';
+import { Selector } from 'Foundation';
 
-// /* 引入 interface.uts 文件中定义的变量 */
-// import { MyApiOptions, MyApiResult, MyApi, MyApiSync } from '../interface.uts';
+/**
+ * iOS UTS插件实现 - 极光推送
+ * 对应AppDelegate.m的功能
+ */
+export class JGPushIOSPlugin implements UTSiOSHookProxy {
+    
+    // MARK: - 应用程序生命周期回调
+    
+    /**
+     * UTS插件创建时的回调
+     */
+    override onCreate(): void {
+        console.log("JGPushIOSPlugin onCreate")
+    }
+    
+    /**
+     * 应用正常启动时的回调
+     * 极光推送初始化
+     */
+    applicationDidFinishLaunchingWithOptions(application: UIApplication | null, launchOptions: Map<UIApplication.LaunchOptionsKey, any> | null = null): boolean {
+        console.log("JGPushIOSPlugin applicationDidFinishLaunchingWithOptions")
+        // 保存启动选项供后续使用
+        JGPushTool.launchOptions = launchOptions
+        return true
+    }
+    
+    /**
+     * 远程通知注册成功时的回调
+     * 极光推送：将deviceToken发送给服务端
+     */
+    didRegisterForRemoteNotifications(deviceToken: Data | null) {
+        console.log("JGPushIOSPlugin didRegisterForRemoteNotifications")
+        JGPushTool.registerDeviceToken(deviceToken)
+    }
+    
+    /**
+     * 远程通知注册失败时的回调
+     */
+    didFailToRegisterForRemoteNotifications(error: NSError | null) {       
+        console.log("JGPushIOSPlugin didFailToRegisterForRemoteNotifications", error)
+    }
+    
+    /**
+     * 收到远程通知时的回调
+     */
+    didReceiveRemoteNotification(userInfo: Map<AnyHashable, any> | null) {
+        console.log("JGPushIOSPlugin didReceiveRemoteNotification", userInfo)
+    }
+}
 
-// /* 引入 unierror.uts 文件中定义的变量 */
-// import { MyApiFailImpl } from '../unierror';
+/**
+ * 极光推送模块实现
+ */
+class JGPushModule implements JPUSHRegisterDelegate {
+    
+    eventCallBack: EventCallBackParams | null = null
+    launchOptions: Map<UIApplication.LaunchOptionsKey, any> | null = null
+    
+    /**
+     * 初始化极光推送
+     */
+    initPush(param: InitPushParams) {
+        // 创建推送注册实体
+        const entity = JPUSHRegisterEntity.alloc().init()
+        entity.types = JPAuthorizationOptionAlert | JPAuthorizationOptionBadge | JPAuthorizationOptionSound | JPAuthorizationOptionProvidesAppNotificationSettings
+        
+        // 注册远程通知配置
+        JPUSHService.registerForRemoteNotificationConfig(entity, delegate: this)
+        
+        // 添加通知监听
+        const method = Selector("didReceiveCustomMessage:")
+        NotificationCenter.default.addObserver(this, selector: method, name: NSNotification.Name.kJPFNetworkDidReceiveMessageNotification, object: null)
+        
+        const method1 = Selector("networkDidLogin:")
+        NotificationCenter.default.addObserver(this, selector: method1, name: NSNotification.Name.kJPFNetworkDidLoginNotification, object: null)
+        
+        const method2 = Selector("networkDidClose:")
+        NotificationCenter.default.addObserver(this, selector: method2, name: NSNotification.Name.kJPFNetworkDidCloseNotification, object: null)
+        
+        // 获取广告标识符（IDFA）
+        let advertisingId: string = ""
+        
+        if (UIDevice.currentDevice.systemVersion.floatValue >= 14.0) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                if status == ATTrackingManagerAuthorizationStatusAuthorized {
+                    advertisingId = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString
+                }
+            }
+        } else {
+            advertisingId = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString
+        }
+        
+        // 初始化极光推送服务
+        JPUSHService.setupWithOption(this.launchOptions, 
+                                   appKey: param.appkey,
+                                   channel: param.channel,
+                                   apsForProduction: param.isProduction,
+                                   advertisingIdentifier: advertisingId)
+        
+        console.log("极光推送SDK初始化完成")
+    }
+    
+    /**
+     * 注册设备令牌
+     */
+    registerDeviceToken(token: Data | null) {
+        JPUSHService.registerDeviceToken(token)
+    }
+    
+    /**
+     * 收到自定义消息回调
+     */
+    @objc didReceiveCustomMessage(notification: Notification) {
+        const userInfo = notification.userInfo
+        
+        const callback: EventCallBack = new EventCallBack()
+        callback.eventName = "onCustomMessage"
+        callback.eventData = userInfo as Dictionary<String, Any>
+        this.eventCallBack?.callback?.(callback)
+    }
+    
+    /**
+     * 网络连接成功回调
+     */
+    @objc networkDidLogin(notification: Notification) {
+        const map: Map<string, any> = new Map()
+        map.set('enable', true)
+        
+        const callback: EventCallBack = {
+            eventName: "onConnectStatus",
+            eventData: map
+        }
+        this.eventCallBack?.callback?.(callback)
+    }
+    
+    /**
+     * 网络连接关闭回调
+     */
+    @objc networkDidClose(notification: Notification) {
+        const map: Map<string, any> = new Map()
+        map.set('enable', false)
+        
+        const callback: EventCallBack = {
+            eventName: "onConnectStatus",
+            eventData: map
+        }
+        this.eventCallBack?.callback?.(callback)
+    }
+    
+    /**
+     * 通知授权状态回调
+     */
+    jpushNotificationAuthorization(status: JPushAuthorizationStatus, withInfo: Map<AnyHashable, any>) {
+        const map: Map<string, any> = new Map()
+        if (status == JPushAuthorizationStatus.statusAuthorized) {
+            map.set('enable', true)
+        } else {
+            map.set('enable', false)
+        }
+        
+        const callback: EventCallBack = new EventCallBack()
+        callback.eventName = "onNotificationStatus"
+        callback.eventData = map
+        this.eventCallBack?.callback?.(callback)
+    }
+    
+    /**
+     * 通知到达回调
+     */
+    jpushNotificationCenter(center: UNUserNotificationCenter, willPresent: UNNotification, withCompletionHandler: (code: Int) => Void) {
+        console.log("willPresent notification")
+        const userInfo = willPresent.request.content.userInfo
+        
+        if ((willPresent.request.trigger?.isKind(of: UNPushNotificationTrigger.self)) != nil) {
+            JPUSHService.handleRemoteNotification(userInfo)
+        }
+        
+        const callback: EventCallBack = new EventCallBack()
+        callback.eventName = "onNotificationArrived"
+        callback.eventData = userInfo as Dictionary<String, Any>
+        this.eventCallBack?.callback?.(callback)
+        
+        completionHandler(NSInteger(UNNotificationPresentationOptions.alert.rawValue) |
+                             NSInteger(UNNotificationPresentationOptions.sound.rawValue) |
+                             NSInteger(UNNotificationPresentationOptions.badge.rawValue))
+    }
+    
+    /**
+     * 通知点击回调
+     */
+    jpushNotificationCenter(center: UNUserNotificationCenter, didReceive: UNNotificationResponse, withCompletionHandler: () => Void) {
+        console.log("didReceiveResponse notification")
+        const userInfo = didReceive.notification.request.content.userInfo
+        
+        if ((didReceive.notification.request.trigger?.isKind(of: UNPushNotificationTrigger.self)) != nil) {
+            JPUSHService.handleRemoteNotification(userInfo)
+        }
+        
+        const callback: EventCallBack = new EventCallBack()
+        callback.eventName = "onNotificationClicked"
+        callback.eventData = userInfo as Dictionary<String, Any>
+        this.eventCallBack?.callback?.(callback)
+        
+        completionHandler()
+    }
+	
+	jpushNotificationCenter(center: UNUserNotificationCenter, @argumentLabel("openSettingsFor") notification: UNNotification) {
+	}
+}
 
-// /**
-//  * 引入三方库
-//  * [可选实现，按需引入]
-//  *
-//  * 在 iOS 平台引入三方库有以下两种方式：
-//  * 1、通过引入三方库framework 或者.a 等方式，需要将 .framework 放到 ./Frameworks 目录下，将.a 放到 ./Libs 目录下。更多信息[详见](https://uniapp.dcloud.net.cn/plugin/uts-plugin.html#ios-平台原生配置)
-//  * 2、通过 cocoaPods 方式引入，将要引入的 pod 信息配置到 config.json 文件下的 dependencies-pods 字段下。详细配置方式[详见](https://uniapp.dcloud.net.cn/plugin/uts-ios-cocoapods.html)
-//  *
-//  * 在通过上述任意方式依赖三方库后，使用时需要在文件中 import:
-//  * 示例：import { LottieLoopMode	} from 'Lottie'
-//  */
+// 全局极光推送工具实例
+const JGPushTool: JGPushModule = new JGPushModule()
 
-// /**
-//  * UTSiOS 为平台内置对象，不需要 import 可直接调用其API，[详见](https://uniapp.dcloud.net.cn/uts/utsios.html)
-//  */
+// MARK: - 导出函数
 
-// /**
-//  * 异步方法
-//  *
-//  * uni-app项目中（vue/nvue）调用示例：
-//  * 1、引入方法声明 import { myApi } from "@/uni_modules/uts-api"
-//  * 2、方法调用
-//  * myApi({
-//  *   paramA: false,
-//  *   complete: (res) => {
-//  *      console.log(res)
-//  *   }
-//  * });
-//  *
-//  */
-// export const myApi : MyApi = function (options : MyApiOptions) {
 
-//   if (options.paramA == true) {
-//     // 返回数据
-//     const res : MyApiResult = {
-//       fieldA: 85,
-//       fieldB: true,
-//       fieldC: 'some message'
-//     };
-//     options.success?.(res);
-//     options.complete?.(res);
+/**
+ * 添加事件回调
+ */
+@UTSJS.keepAlive
+export function setEventCallBack(param: EventCallBackParams): void {
+    JGPushTool.eventCallBack = param
+}
 
-//   } else {
-//     // 返回错误
-//     let failResult = new MyApiFailImpl(9010001);
-//     options.fail?.(failResult)
-//     options.complete?.(failResult)
-//   }
 
-// }
-
-// /**
-//  * 同步方法
-//  *
-//  * uni-app项目中（vue/nvue）调用示例：
-//  * 1、引入方法声明 import { myApiSync } from "@/uni_modules/uts-api"
-//  * 2、方法调用
-//  * myApiSync(true);
-//  *
-//  */
-// export const myApiSync : MyApiSync = function (paramA : boolean) : MyApiResult {
-//   // 返回数据，根据插件功能获取实际的返回值
-//   const res : MyApiResult = {
-//     fieldA: 85,
-//     fieldB: paramA,
-//     fieldC: 'some message'
-//   };
-//   return res;
-// }
-
-// /**
-//  * 更多插件开发的信息详见：https://uniapp.dcloud.net.cn/plugin/uts-plugin.html
 
