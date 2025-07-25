@@ -31,8 +31,8 @@ class EventCallbackManager {
 	triggerCallBack(event : EventCallBack) : void {
 		if (this.callBack !== null) {
 			console.log(TAG, "触发回调")
-			if (this.callBack.callback !== undefined) {
-				this.callBack.callback?.(event)
+			if (this.callBack.callback !== null) {
+				this.callBack.callback(event)
 			} else {
 				console.log(TAG, "未设置回调函数，事件内容：", event)
 			}
@@ -234,6 +234,7 @@ export const setHeartbeatInterval = function (heartbeatInterval : Int) {
 	JPushInterface.setHeartbeatInterval(UTSAndroid.getAppContext(), heartbeatInterval)
 }
 
+@UTSJS.keepAlive
 export function setEventCallBack(param : EventCallBackParams) : void {
 	eventCallbackManager.setEventCallBack(param)
 }
