@@ -29,12 +29,11 @@
 		getAlias
 	} from "@/uni_modules/jg-jpush-u"
 
-
-	if (uni.getSystemInfoSync().platform == "android") {
-		import {
-			getAllTags
-		} from "@/uni_modules/jg-jpush-u"
-	}
+	// #ifdef APP-PLUS
+	import {
+		getAllTags
+	} from "@/uni_modules/jg-jpush-u"
+	// #endif
 
 	// #ifdef APP-HARMONY
 	import {
@@ -72,16 +71,18 @@
 		addTags(1, ["ab", "cd"])
 	}
 	let onGetTags = () => {
+		// #ifdef APP-PLUS
+		getAllTags(2)
+		// #endif
+		
 		// #ifdef APP-HARMONY
-
 		getTags(2, 1)
 		// #endif
-		if (uni.getSystemInfoSync().platform == "ios") {
-
-		}
-		if (uni.getSystemInfoSync().platform == "android") {
-			getAllTags(2)
-		}
+		
+		// #ifdef APP-PLUS-IOS
+		// iOS平台目前暂未实现getTags方法
+		console.log("iOS平台暂不支持getTags方法")
+		// #endif
 	}
 
 	let onSetAlias = () => {
