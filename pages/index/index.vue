@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="log-container">
-		      <text>{{ msg }}</text>
+			<text>{{ msg }}</text>
 		</view>
 		<button type="primary" @click="ClearMsg">ClearMsg</button>
 		<button type="primary" @click="onGetRegistrationId">getRegistrationId</button>
@@ -14,27 +14,36 @@
 </template>
 
 <script setup>
-	// #ifdef APP-HARMONY
 	import {
 		ref
 	} from 'vue';
 	import {
 		setDebug,
-		setAppKey,
 		setChannel,
 		init,
 		getRegistrationId,
 		setEventCallBack,
-		EventCallBackParams,
-		EventCallBack,
 		addTags,
-		getTags,
 		setAlias,
 		deleteAlias,
 		getAlias
 	} from "@/uni_modules/jg-jpush-u"
 
-	let msg = ref("HARMONY\n");
+
+	if (uni.getSystemInfoSync().platform == "android") {
+		import {
+			getAllTags
+		} from "@/uni_modules/jg-jpush-u"
+	}
+
+	// #ifdef APP-HARMONY
+	import {
+		getTags
+	} from "@/uni_modules/jg-jpush-u"
+	// #endif
+
+
+	let msg = ref(uni.getSystemInfoSync().platform + "\n");
 
 
 	console.log("JPUSH-", 'push vue');
@@ -46,36 +55,44 @@
 			console.log("JPUSH-", 'push vue callback eventData:' + res.eventData);
 		}
 	})
-	
+
 	init();
-	
-	
-	let ClearMsg=()=>{msg.value="clearMsg\n"}
-	
-	let onGetRegistrationId=()=>{
+
+
+	let ClearMsg = () => {
+		msg.value = "clearMsg\n"
+	}
+
+	let onGetRegistrationId = () => {
 		let a = getRegistrationId();
 		console.log("JPUSH-", 'push vue getRegistrationId:' + JSON.stringify(a));
 		msg.value += JSON.stringify(a) + "\n";
 	}
-	let onAddTag=()=>{
-		addTags(1,["ab","cd"])
+	let onAddTag = () => {
+		addTags(1, ["ab", "cd"])
 	}
-	let onGetTags=()=>{
-		getTags(2,1)
+	let onGetTags = () => {
+		// #ifdef APP-HARMONY
+
+		getTags(2, 1)
+		// #endif
+		if (uni.getSystemInfoSync().platform == "ios") {
+
+		}
+		if (uni.getSystemInfoSync().platform == "android") {
+			getAllTags(2)
+		}
 	}
-	
-	let onSetAlias=()=>{
-		setAlias(3,"jjjjjj")
+
+	let onSetAlias = () => {
+		setAlias(3, "jjjjjj")
 	}
-	let onDeleteAlias=()=>{
+	let onDeleteAlias = () => {
 		deleteAlias(4)
 	}
-	let onGetAlias=()=>{
+	let onGetAlias = () => {
 		getAlias(5)
 	}
-	
-	
-	// #endif
 </script>
 
 <style>
