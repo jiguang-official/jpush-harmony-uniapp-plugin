@@ -59,8 +59,8 @@ export const init = function () {
 	JPushInterface.init(UTSAndroid.getAppContext())
 }
 
-export const setDebugMode = function (debug : boolean) {
-	console.log(TAG, "setDebugMode", debug)
+export const setDebug = function (debug : boolean) {
+	console.log(TAG, "setDebug", debug)
 	JPushInterface.setDebugMode(debug)
 }
 
@@ -84,8 +84,8 @@ export const setChannel = function (channel : string) {
 	JPushInterface.setChannel(UTSAndroid.getAppContext(), channel)
 }
 
-export const getRegistrationID = function () : string {
-	console.log(TAG, "getRegistrationID")
+export const getRegistrationId = function () : string {
+	console.log(TAG, "getRegistrationId")
 	return JPushInterface.getRegistrationID(UTSAndroid.getAppContext())
 }
 
@@ -109,19 +109,34 @@ export const clearNotificationById = function (notificationId : Int) {
 	JPushInterface.clearNotificationById(UTSAndroid.getAppContext(), notificationId)
 }
 
-export const setTags = function (sequence : Int, tags : Set<string>) {
+export const setTags = function (sequence : Int, tags : string[]) {
 	console.log(TAG, "setTags", sequence, tags)
-	JPushInterface.setTags(UTSAndroid.getAppContext(), sequence, tags)
+	// 将string[]转换为Set<string>以适配Android SDK
+	const tagSet = new Set<string>()
+	for (let tag of tags) {
+		tagSet.add(tag)
+	}
+	JPushInterface.setTags(UTSAndroid.getAppContext(), sequence, tagSet)
 }
 
-export const addTags = function (sequence : Int, tags : Set<string>) {
+export const addTags = function (sequence : Int, tags : string[]) {
 	console.log(TAG, "addTags", sequence, tags)
-	JPushInterface.addTags(UTSAndroid.getAppContext(), sequence, tags)
+	// 将string[]转换为Set<string>以适配Android SDK
+	const tagSet = new Set<string>()
+	for (let tag of tags) {
+		tagSet.add(tag)
+	}
+	JPushInterface.addTags(UTSAndroid.getAppContext(), sequence, tagSet)
 }
 
-export const deleteTags = function (sequence : Int, tags : Set<string>) {
+export const deleteTags = function (sequence : Int, tags : string[]) {
 	console.log(TAG, "deleteTags", sequence, tags)
-	JPushInterface.deleteTags(UTSAndroid.getAppContext(), sequence, tags)
+	// 将string[]转换为Set<string>以适配Android SDK
+	const tagSet = new Set<string>()
+	for (let tag of tags) {
+		tagSet.add(tag)
+	}
+	JPushInterface.deleteTags(UTSAndroid.getAppContext(), sequence, tagSet)
 }
 
 export const cleanTags = function (sequence : Int) {
