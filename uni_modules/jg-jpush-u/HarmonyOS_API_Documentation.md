@@ -522,7 +522,29 @@ setEnableAppTerminate(true)
 
 插件支持以下事件回调：
 
-### 1. onCustomMessage
+### 1. onRegister
+注册成功后回调rid
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onRegister",
+    "eventData": "registrationId字符串"
+}
+```
+
+### 2. onConnected
+长连接登陆回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onConnected",
+    "eventData": "true"  // 或 "false"
+}
+```
+
+### 3. onCustomMessage
 收到自定义消息时触发
 
 **回调数据格式：**
@@ -533,35 +555,13 @@ setEnableAppTerminate(true)
 }
 ```
 
-### 2. onConnectStatus
-连接状态变化时触发
-
-**回调数据格式：**
-```json
-{
-    "eventName": "onConnectStatus",
-    "eventData": "true"  // 或 "false"
-}
-```
-
-### 3. onNotificationReceived
-应用在前台收到通知时触发
-
-**回调数据格式：**
-```json
-{
-    "eventName": "onNotificationReceived",
-    "eventData": "通知内容的JSON字符串"
-}
-```
-
-### 4. onNotificationOpened
+### 4. onClickMessage
 用户点击通知时触发
 
 **回调数据格式：**
 ```json
 {
-    "eventName": "onNotificationOpened",
+    "eventName": "onClickMessage",
     "eventData": "通知内容的JSON字符串"
 }
 ```
@@ -613,6 +613,53 @@ setEnableAppTerminate(true)
 }
 ```
 
+### 8. onJMessageExtra
+通知扩展消息回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onJMessageExtra",
+    "eventData": {
+        "msgId": "消息ID",
+        "title": "标题",
+        "content": "内容",
+        "extras": "自定义数据",
+        "extraData": "扩展数据"
+    }
+}
+```
+
+### 9. onJMessageVoIP
+VoIP呼叫消息回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onJMessageVoIP",
+    "eventData": {
+        "msgId": "消息ID",
+        "extraData": "VoIP自定义数据"
+    }
+}
+```
+
+### 10. onCommandResult
+交互事件回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onCommandResult",
+    "eventData": {
+        "cmd": 2007,  // 2007通知停止，2006恢复通知
+        "errorCode": 0,
+        "msg": "内容信息",
+        "extra": "额外数据"
+    }
+}
+```
+
 ## 使用示例
 
 ### 完整初始化示例
@@ -622,16 +669,16 @@ setEnableAppTerminate(true)
 setEventCallBack({
     callback: (event) => {
         switch(event.eventName) {
+            case 'onRegister':
+                console.log('注册成功:', event.eventData)
+                break
+            case 'onConnected':
+                console.log('连接状态:', event.eventData)
+                break
             case 'onCustomMessage':
                 console.log('收到自定义消息:', event.eventData)
                 break
-            case 'onConnectStatus':
-                console.log('连接状态:', event.eventData)
-                break
-            case 'onNotificationReceived':
-                console.log('收到通知:', event.eventData)
-                break
-            case 'onNotificationOpened':
+            case 'onClickMessage':
                 console.log('点击通知:', event.eventData)
                 break
             case 'onTagOperatorResult':
@@ -643,13 +690,20 @@ setEventCallBack({
             case 'onMobileNumberOperatorResult':
                 console.log('手机号码操作结果:', event.eventData)
                 break
+            case 'onJMessageExtra':
+                console.log('扩展消息:', event.eventData)
+                break
+            case 'onJMessageVoIP':
+                console.log('VoIP消息:', event.eventData)
+                break
+            case 'onCommandResult':
+                console.log('命令结果:', event.eventData)
+                break
         }
     }
 })
 
 // 2. 设置应用配置
-setAppKey("your_app_key")
-setChannel("AppGallery")
 setDebug(true)
 
 // 3. 设置推送配置
@@ -668,31 +722,4 @@ console.log('RegistrationID:', registrationId)
 // 6. 设置标签和别名
 setTags(1, ["vip", "premium"])
 setAlias(2, "user123")
-
-// 7. 设置手机号码
-setMobileNumber(3, "13800138000")
-
-// 8. 设置数据收集
-setListWifi(true)
-setEnableAppTerminate(true)
 ```
-
-## 注意事项
-
-1. **初始化顺序**：必须先调用 `setEventCallBack` 设置回调，再调用 `init` 初始化
-2. **序列号管理**：每个操作都需要唯一的序列号，用于区分不同的操作结果
-3. **回调处理**：所有异步操作的结果都通过事件回调返回
-4. **权限要求**：HarmonyOS平台需要配置推送证书和权限
-5. **调试模式**：开发阶段建议开启调试模式，生产环境请关闭
-6. **数据收集**：注意用户隐私，合理设置数据收集开关
-
-## 错误码说明
-
-- `0`: 操作成功
-- 其他值: 操作失败，具体错误码请参考极光推送官方文档
-
-## 版本信息
-
-- 插件版本：基于极光推送SDK
-- 支持平台：HarmonyOS
-- 最低HarmonyOS版本：API 9+ 
