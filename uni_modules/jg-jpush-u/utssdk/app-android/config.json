@@ -1,37 +1,13 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk:jpush:5.8.0",
-		"cn.jiguang.sdk.plugin:xiaomi:5.8.0",
-		"cn.jiguang.sdk.plugin:meizu:5.8.0",
-		"cn.jiguang.sdk.plugin:vivo:5.8.0",
-		"cn.jiguang.sdk.plugin:oppo:5.8.0", 
-		"cn.jiguang.sdk.plugin:fcm:5.8.0",
-		"cn.jiguang.sdk.plugin:honor:5.8.0", 
-		"cn.jiguang.sdk.plugin:nio:5.8.0", 
-		"cn.jiguang.sdk.plugin:huawei:5.8.0",
-
-
-		"com.huawei.hms:push:6.12.0.300",
-		"com.google.firebase:firebase-messaging:24.1.2",
-		"com.google.code.gson:gson:2.10.1",
-		"commons-codec:commons-codec:1.6",
-		"androidx.annotation:annotation:1.1.0"
+		"cn.jiguang.sdk:jpush:5.8.0"
 
 	],
 	"minSdkVersion": "21",
 	"project": {
-		"plugins": [
-			"com.google.gms.google-services",
-			"com.huawei.agconnect"
-		],
-		"dependencies": [
-			"com.google.gms:google-services:4.4.2",
-			"com.huawei.agconnect:agcp:1.9.1.300"
-		],
 		"repositories": [
 			"google()",
-			"mavenCentral()",
-			"maven { url 'https://developer.huawei.com/repo/' }"
+			"mavenCentral()"
 		]
 	}
 }
