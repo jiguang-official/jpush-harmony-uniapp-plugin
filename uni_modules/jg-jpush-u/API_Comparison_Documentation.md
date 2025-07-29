@@ -149,8 +149,8 @@
 | 通知被清除 | `onNotifyMessageDismiss` | `onNotifyMessageDismiss` | - | HarmonyOS不支持 |
 | 设备注册 | - | `onRegister` | `onRegister` | iOS不支持 |
 | 命令结果 | - | `onCommandResult` | `onCommandResult` | iOS不支持 |
-| 标签操作结果 | `onTagOperatorResult` | `onTagOperatorResult` | `onTagOperatorResult` | 三个平台一致 |
-| 检查标签结果 | - | `onCheckTagOperatorResult` | - | 仅Android支持 |
+| 标签操作结果 | `onTagOperatorResult` | `onTagOperatorResult` | `onTagOperatorResult` | 三个平台一致，包括标签设置、添加、删除、清除、获取和验证绑定状态等操作 |
+
 | 别名操作结果 | `onAliasOperatorResult` | `onAliasOperatorResult` | `onAliasOperatorResult` | 三个平台一致 |
 | 手机号码操作结果 | `onMobileNumberOperatorResult` | `onMobileNumberOperatorResult` | `onMobileNumberOperatorResult` | 三个平台一致 |
 | 属性操作结果 | - | `onPropertyOperatorResult` | - | 仅Android支持 |

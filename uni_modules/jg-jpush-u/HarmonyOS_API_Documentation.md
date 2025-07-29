@@ -551,7 +551,20 @@ setEnableAppTerminate(true)
 ```json
 {
     "eventName": "onCustomMessage",
-    "eventData": "消息内容的JSON字符串"
+    "eventData": "JCustomMessage对象的JSON字符串"
+}
+```
+
+**JCustomMessage对象结构：**
+```json
+{
+    "msgId": "消息ID",           // 通知id
+    "title": "标题",             // 通知标题
+    "content": "内容",           // 通知内容
+    "contentType": "内容类型",    // 通知内容类型
+    "extras": {},               // 通知自定义键值对
+    "ttl": 86400,              // 后台下发的信息过期时间，单位秒
+    "stime": 1640995200000     // 后台下发时间，毫秒
 }
 ```
 
@@ -562,7 +575,17 @@ setEnableAppTerminate(true)
 ```json
 {
     "eventName": "onClickMessage",
-    "eventData": "通知内容的JSON字符串"
+    "eventData": "JMessage对象的JSON字符串"
+}
+```
+
+**JMessage对象结构：**
+```json
+{
+    "msgId": "消息ID",     // 通知id
+    "title": "标题",       // 通知标题
+    "content": "内容",     // 通知内容
+    "extras": "自定义数据"  // 自定义数据
 }
 ```
 
@@ -573,12 +596,20 @@ setEnableAppTerminate(true)
 ```json
 {
     "eventName": "onTagOperatorResult",
-    "eventData": {
-        "code": 0,
-        "tags": ["tag1", "tag2"],
-        "sequence": 1,
-        "isBind": true  // 仅在checkTagBindState时存在
-    }
+    "eventData": "JTagMessage对象的JSON字符串"
+}
+```
+
+**JTagMessage对象结构：**
+```json
+{
+    "sequence": 1,        // 对应操作id，全局不要重复
+    "code": 0,           // 0成功，JTagMessage.CODE_TIME_OUT超时
+    "op": "操作类型",     // 操作类型
+    "tags": ["tag1", "tag2"], // 对应数据
+    "curr": 1,           // 数据当前页数，页数从1开始
+    "total": 1,          // 数据总页数
+    "msg": "消息"        // 消息
 }
 ```
 
@@ -589,11 +620,20 @@ setEnableAppTerminate(true)
 ```json
 {
     "eventName": "onAliasOperatorResult",
-    "eventData": {
-        "code": 0,
-        "alias": "user123",
-        "sequence": 1
-    }
+    "eventData": "JAliasMessage对象的JSON字符串"
+}
+```
+
+**JAliasMessage对象结构：**
+```json
+{
+    "sequence": 1,        // 对应操作id，全局不要重复
+    "code": 0,           // 0成功，JAliasMessage.CODE_TIME_OUT超时
+    "op": "操作类型",     // 操作类型
+    "alias": "user123",   // 对应数据
+    "curr": 1,           // 当前页数
+    "total": 1,          // 总页数
+    "msg": "消息"        // 消息
 }
 ```
 
@@ -604,12 +644,17 @@ setEnableAppTerminate(true)
 ```json
 {
     "eventName": "onMobileNumberOperatorResult",
-    "eventData": {
-        "code": 0,
-        "message": "success",
-        "mobileNumber": "13800138000",
-        "sequence": 1
-    }
+    "eventData": "JMobileNumberMessage对象的JSON字符串"
+}
+```
+
+**JMobileNumberMessage对象结构：**
+```json
+{
+    "sequence": 1,           // 对应操作id，全局不要重复
+    "code": 0,              // 0成功，超时错误码
+    "mobileNumber": "13800138000", // 手机号码
+    "msg": "success"        // 消息
 }
 ```
 
@@ -620,13 +665,18 @@ setEnableAppTerminate(true)
 ```json
 {
     "eventName": "onJMessageExtra",
-    "eventData": {
-        "msgId": "消息ID",
-        "title": "标题",
-        "content": "内容",
-        "extras": "自定义数据",
-        "extraData": "扩展数据"
-    }
+    "eventData": "JMessageExtra对象的JSON字符串"
+}
+```
+
+**JMessageExtra对象结构：**
+```json
+{
+    "msgId": "消息ID",           // 通知id
+    "title": "标题",             // 通知标题
+    "content": "内容",           // 通知内容
+    "extras": {},               // 自定义数据
+    "extraData": "扩展数据"      // 通知扩展消息的自定义数据
 }
 ```
 
@@ -637,10 +687,15 @@ VoIP呼叫消息回调
 ```json
 {
     "eventName": "onJMessageVoIP",
-    "eventData": {
-        "msgId": "消息ID",
-        "extraData": "VoIP自定义数据"
-    }
+    "eventData": "JMessageVoIP对象的JSON字符串"
+}
+```
+
+**JMessageVoIP对象结构：**
+```json
+{
+    "msgId": "消息ID",           // 通知id
+    "extraData": "VoIP自定义数据" // VoIP自定义数据
 }
 ```
 
@@ -651,12 +706,17 @@ VoIP呼叫消息回调
 ```json
 {
     "eventName": "onCommandResult",
-    "eventData": {
-        "cmd": 2007,  // 2007通知停止，2006恢复通知
-        "errorCode": 0,
-        "msg": "内容信息",
-        "extra": "额外数据"
-    }
+    "eventData": "JCmdMessage对象的JSON字符串"
+}
+```
+
+**JCmdMessage对象结构：**
+```json
+{
+    "cmd": 2007,              // 操作事件，2007通知停止，2006恢复通知
+    "errorCode": 0,           // 0表示成功，其他为错误
+    "msg": "内容信息",         // 内容信息
+    "extra": {}               // 额外数据
 }
 ```
 

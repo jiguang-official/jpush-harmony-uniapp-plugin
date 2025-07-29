@@ -286,7 +286,7 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         super.onCheckTagOperatorResult(context, jPushMessage);
         
         // 触发检查标签操作结果回调
-        this.triggerEventCallback('onCheckTagOperatorResult', this.convertJPushMessageToJson(jPushMessage));
+        this.triggerEventCallback('onTagOperatorResult', this.convertJPushMessageToJson(jPushMessage));
     }
 
     /**

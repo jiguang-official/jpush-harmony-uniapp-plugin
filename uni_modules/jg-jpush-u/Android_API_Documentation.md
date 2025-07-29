@@ -492,29 +492,22 @@ setDataInsightsEnable(true)
 {
     "eventName": "onTagOperatorResult",
     "eventData": {
-        "code": 0,
+        "alias": "别名",
         "tags": ["tag1", "tag2"],
+        "pros": "属性",
+        "checkTag": "检查的标签",
+        "errorCode": 0,
+        "tagCheckStateResult": "标签检查状态结果",
+        "isTagCheckOperator": true,
         "sequence": 1,
-        "isBind": true  // 仅在checkTagBindState时存在
+        "mobileNumber": "手机号码",
+        "protoType": "协议类型",
+        "action": "操作类型"
     }
 }
 ```
 
-### 9. onCheckTagOperatorResult
-检查标签操作结果回调
 
-**回调数据格式：**
-```json
-{
-    "eventName": "onCheckTagOperatorResult",
-    "eventData": {
-        "code": 0,
-        "tags": ["tag1"],
-        "sequence": 1,
-        "isBind": true
-    }
-}
-```
 
 ### 10. onAliasOperatorResult
 别名操作结果回调
@@ -524,9 +517,17 @@ setDataInsightsEnable(true)
 {
     "eventName": "onAliasOperatorResult",
     "eventData": {
-        "code": 0,
         "alias": "user123",
-        "sequence": 1
+        "tags": ["tag1", "tag2"],
+        "pros": "属性",
+        "checkTag": "检查的标签",
+        "errorCode": 0,
+        "tagCheckStateResult": "标签检查状态结果",
+        "isTagCheckOperator": false,
+        "sequence": 1,
+        "mobileNumber": "手机号码",
+        "protoType": "协议类型",
+        "action": "操作类型"
     }
 }
 ```
@@ -539,10 +540,17 @@ setDataInsightsEnable(true)
 {
     "eventName": "onMobileNumberOperatorResult",
     "eventData": {
-        "code": 0,
-        "message": "success",
+        "alias": "别名",
+        "tags": ["tag1", "tag2"],
+        "pros": "属性",
+        "checkTag": "检查的标签",
+        "errorCode": 0,
+        "tagCheckStateResult": "标签检查状态结果",
+        "isTagCheckOperator": false,
+        "sequence": 1,
         "mobileNumber": "13800138000",
-        "sequence": 1
+        "protoType": "协议类型",
+        "action": "操作类型"
     }
 }
 ```
@@ -555,10 +563,17 @@ setDataInsightsEnable(true)
 {
     "eventName": "onPropertyOperatorResult",
     "eventData": {
-        "code": 0,
         "alias": "user123",
         "tags": ["tag1", "tag2"],
-        "sequence": 1
+        "pros": "属性",
+        "checkTag": "检查的标签",
+        "errorCode": 0,
+        "tagCheckStateResult": "标签检查状态结果",
+        "isTagCheckOperator": false,
+        "sequence": 1,
+        "mobileNumber": "手机号码",
+        "protoType": "协议类型",
+        "action": "操作类型"
     }
 }
 ```
@@ -683,9 +698,7 @@ setEventCallBack({
             case 'onTagOperatorResult':
                 console.log('标签操作结果:', event.eventData)
                 break
-            case 'onCheckTagOperatorResult':
-                console.log('检查标签结果:', event.eventData)
-                break
+
             case 'onAliasOperatorResult':
                 console.log('别名操作结果:', event.eventData)
                 break
