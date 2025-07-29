@@ -18,6 +18,8 @@
 - [android api](./uni_modules/jg-jpush-u/Android_API_Documentation.md)
 - [鸿蒙 api](./uni_modules/jg-jpush-u/HarmonyOS_API_Documentation.md)
 - [ios api](./uni_modules/jg-jpush-u/iOS_API_Documentation.md)
+- 
+- [三平台API对比](./uni_modules/jg-jpush-u/API_Comparison_Documentation.md)
 
 
 ## 2. 相关资源
