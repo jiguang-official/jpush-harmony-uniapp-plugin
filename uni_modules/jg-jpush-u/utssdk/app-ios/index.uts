@@ -19,13 +19,13 @@ const TAG = "| JIGUANG | JPUSH-uni-"
 
 // 统一日志方法
 function log(message : string, ...args : any[]) : void {
-    // 这里拼接args
-    let fullMessage = message
-    if (args != null && args.length > 0) {
-        for (let arg of args) {
-            fullMessage += " " + JSON.stringify(arg)!
-        }
-    }
+	// 这里拼接args
+	let fullMessage = message
+	if (args != null && args.length > 0) {
+		for (let arg of args) {
+			fullMessage += " " + JSON.stringify(arg)!
+		}
+	}
 	// 可以根据需要选择使用console.log或iOS的log
 	console.log(TAG, fullMessage)
 	// 如果需要使用iOS的log，可以取消注释下面的代码
@@ -216,7 +216,7 @@ class JGPushModule implements JPUSHRegisterDelegate {
 	@objc networkDidLogin(notification : Notification) {
 		log("JGPushModule networkDidLogin", notification)
 
-		eventCallbackManager.triggerEvent("onConnectStatus", "true")
+		eventCallbackManager.triggerEvent("onConnected", "true")
 	}
 
 	/**
@@ -225,7 +225,7 @@ class JGPushModule implements JPUSHRegisterDelegate {
 	@objc networkDidClose(notification : Notification) {
 		log("JGPushModule networkDidClose", notification)
 
-		eventCallbackManager.triggerEvent("onConnectStatus", "false")
+		eventCallbackManager.triggerEvent("onConnected", "false")
 	}
 
 	/**
@@ -241,7 +241,7 @@ class JGPushModule implements JPUSHRegisterDelegate {
 
 		const u = userInfo as Dictionary<String, Any>;
 		const jsonString = JSON.stringify(u)
-		eventCallbackManager.triggerEvent("onNotificationReceived", jsonString!)
+		eventCallbackManager.triggerEvent("onNotifyMessageArrived", jsonString!)
 
 		completionHandler(Int(UNNotificationPresentationOptions.alert.rawValue) | Int(UNNotificationPresentationOptions.sound.rawValue) | Int(UNNotificationPresentationOptions.badge.rawValue))
 	}
@@ -260,7 +260,7 @@ class JGPushModule implements JPUSHRegisterDelegate {
 
 		const u = userInfo as Dictionary<String, Any>;
 		const jsonString = JSON.stringify(u)
-		eventCallbackManager.triggerEvent("onNotificationOpened", jsonString!)
+		eventCallbackManager.triggerEvent("onClickMessage", jsonString!)
 		completionHandler() // 系统要求执行这个方法
 	}
 
@@ -336,77 +336,119 @@ export function getRegistrationId() : string {
 export function setTags(sequence : Int, tags : string[]) : void {
 	log("setTags", sequence, tags)
 	// 单独定义回调函数，并明确指定其类型
-	const callback : (iResCode : Int, iTags : Array | null, seq : Int) => void = (iResCode : Int, iTags : Array | null, seq : Int) => {
-		log("setTags completion", iResCode)
+	const callback  = (iResCode : Int, iTags : Swift.Set<AnyHashable>  | null, seq : Int) => {
+		const result = {
+			code: iResCode,
+			tags: iTags,
+			sequence: seq
+		}
+		log("setTags completion", result)
+		eventCallbackManager.triggerEvent("onTagOperatorResult", JSON.stringify(result)!)
 	}
-	JPUSHSDKHelper.setTags(tags, completion = callback, seq = sequence)
+	const setTags:Swift.Set<String> = new Swift.Set<String>(tags)
+	JPUSHService.setTags(setTags, completion = callback, seq = sequence)
 }
 
 
 /**
  * 添加标签
  */
-export function addTags(sequence: Int, tags: string[]): void {
-    log("addTags", sequence, tags)
-    
-    const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
-        log("addTags completion", iResCode,iTags,seq)
-    }
-    
-    JPUSHSDKHelper.addTags(tags, completion = callback, seq = sequence)
+export function addTags(sequence : Int, tags : string[]) : void {
+	log("addTags", sequence, tags)
+
+	const callback = (iResCode : Int, iTags : Swift.Set<AnyHashable>  | null, seq : Int) => {
+		const result = {
+			code: iResCode,
+			tags: iTags,
+			sequence: seq
+		}
+		log("addTags completion", result)
+		eventCallbackManager.triggerEvent("onTagOperatorResult", JSON.stringify(result)!)
+	}
+	
+	
+	const setTags:Swift.Set<String> = new Swift.Set<String>(tags)
+
+	JPUSHService.addTags(setTags, completion = callback, seq = sequence)
 }
 
 /**
  * 删除标签
  */
-export function deleteTags(sequence: Int, tags: string[]): void {
-    log("deleteTags", sequence, tags)
-    
-    const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
-        log("deleteTags completion", iResCode)
-    }
-    
-    JPUSHSDKHelper.deleteTags(tags, completion = callback, seq = sequence)
+export function deleteTags(sequence : Int, tags : string[]) : void {
+	log("deleteTags", sequence, tags)
+
+	const callback  = (iResCode : Int, iTags : Swift.Set<AnyHashable>  | null, seq : Int) => {
+		const result = {
+			code: iResCode,
+			tags: iTags,
+			sequence: seq
+		}
+		log("deleteTags completion", result)
+		eventCallbackManager.triggerEvent("onTagOperatorResult", JSON.stringify(result)!)
+	}
+
+	const setTags:Swift.Set<String> = new Swift.Set<String>(tags)
+	JPUSHService.deleteTags(setTags, completion = callback, seq = sequence)
 }
 
 /**
  * 清除所有标签
  */
-export function cleanTags(sequence: Int): void {
-    log("cleanTags", sequence)
-    
-    const callback : (iResCode: NSInteger, iTags: Array | null, seq: NSInteger) => void = (iResCode: NSInteger, iTags: Array | null, seq: NSInteger) => {
-        log("cleanTags completion", iResCode)
-    }
-    
-    JPUSHSDKHelper.cleanTags(callback, seq=sequence)
+export function cleanTags(sequence : Int) : void {
+	log("cleanTags", sequence)
+
+	const callback = (iResCode : Int, iTags : Swift.Set<AnyHashable>  | null, seq : Int) => {
+		const result = {
+			code: iResCode,
+			tags: iTags,
+			sequence: seq
+		}
+		log("cleanTags completion", result)
+		eventCallbackManager.triggerEvent("onTagOperatorResult", JSON.stringify(result)!)
+	}
+
+	JPUSHService.cleanTags(callback, seq = sequence)
 }
 
 /**
  * 获取所有标签
  */
-export function getAllTags(sequence: Int): void {
-    log("getAllTags", sequence)
-    
-    const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
-        log("getAllTags completion", iResCode)
-    }
-    
-    JPUSHSDKHelper.getAllTags(callback, seq = sequence)
+export function getAllTags(sequence : Int) : void {
+	log("getAllTags", sequence)
+
+	const callback  = (iResCode : Int, iTags : Swift.Set<AnyHashable> | null, seq : Int) => {
+		const result = {
+			code: iResCode,
+			tags: iTags,
+			sequence: seq
+		}
+		log("getAllTags completion", result)
+		eventCallbackManager.triggerEvent("onTagOperatorResult", JSON.stringify(result)!)
+	}
+
+	JPUSHService.getAllTags(callback, seq = sequence)
 }
 
 /**
  * 验证标签绑定状态
  */
-export function validTag(sequence: Int, tag: string): void {
-    log("validTag", sequence, tag)
-    
-    const callback = 
-	(iResCode: Int, iTags: Array | null, seq: Int, isBind: boolean) => {
-        log("validTag completion", iResCode, isBind)
-    }
-    JPUSHSDKHelper.validTag(tag, completion = callback, seq = sequence)
-    // JPUSHService.validTag(tag, completion = callback, seq = sequence)
+export function checkTagBindState(sequence : Int, tag : string) : void {
+	log("checkTagBindState", sequence, tag)
+
+	const callback =
+		(iResCode : Int, iTags : Swift.Set<AnyHashable> | null, seq : Int, isBind : boolean) => {
+			const result = {
+				code: iResCode,
+				tags: iTags,
+				sequence: seq,
+				isBind: isBind
+			}
+			log("validTag completion", result)
+			eventCallbackManager.triggerEvent("onTagOperatorResult", JSON.stringify(result)!)
+		}
+	// JPUSHService.validTag(tag, completion = callback, seq = sequence)
+	JPUSHService.validTag(tag, completion = callback, seq = sequence)
 }
 
 
@@ -415,12 +457,18 @@ export function validTag(sequence: Int, tag: string): void {
  */
 export function setAlias(sequence : Int, alias : string) : void {
 	log("setAlias", sequence, alias)
-	
-	
-	const callback : (iResCode : Int, iAlias : String | null, seq : Int)  => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
-		log("setAlias completion", iResCode)
+
+
+	const callback : (iResCode : Int, iAlias : String | null, seq : Int) => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
+		const result = {
+			code: iResCode,
+			alias: iAlias,
+			sequence: seq
+		}
+		log("setAlias completion", result)
+		eventCallbackManager.triggerEvent("onAliasOperatorResult", JSON.stringify(result)!)
 	}
-	
+
 	JPUSHService.setAlias(alias, completion = callback, seq = sequence)
 }
 
@@ -430,11 +478,17 @@ export function setAlias(sequence : Int, alias : string) : void {
  */
 export function deleteAlias(sequence : Int) : void {
 	log("deleteAlias", sequence)
-	
+
 	const callback : (iResCode : Int, iAlias : String | null, seq : Int) => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
-		log("deleteAlias completion", iResCode)
+		const result = {
+			code: iResCode,
+			alias: iAlias,
+			sequence: seq
+		}
+		log("deleteAlias completion", result)
+		eventCallbackManager.triggerEvent("onAliasOperatorResult", JSON.stringify(result)!)
 	}
-	
+
 	JPUSHService.deleteAlias(callback, seq = sequence)
 }
 
@@ -443,28 +497,43 @@ export function deleteAlias(sequence : Int) : void {
  */
 export function getAlias(sequence : Int) : void {
 	log("getAlias", sequence)
-	
+
 	const callback : (iResCode : Int, iAlias : String | null, seq : Int) => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
-		log("getAlias completion", iResCode)
+		const result = {
+			code: iResCode,
+			alias: iAlias,
+			sequence: seq
+		}
+		log("getAlias completion", result)
+		eventCallbackManager.triggerEvent("onAliasOperatorResult", JSON.stringify(result)!)
 	}
-	
+
 	JPUSHService.getAlias(callback, seq = sequence)
 }
 
 /**
  * 设置手机号码
  */
-export function setMobileNumber(mobileNumber : string) : void {
+export function setMobileNumber(sequence : number, mobileNumber : string) : void {
 	log("setMobileNumber", mobileNumber)
-	
+
 	const callback : (error : NSError | null) => void = (error : NSError | null) => {
 		if (error !== null) {
 			log("setMobileNumber error", error);
 		} else {
 			log("setMobileNumber success");
 		}
+		
+		const result = {
+			code: error === null ? 0 : (error as NSError).code,
+			message: error === null ? "success" : error,
+			mobileNumber:mobileNumber,
+			sequence:sequence
+		}
+		log("setMobileNumber completion", result)
+		eventCallbackManager.triggerEvent("onMobileNumberOperatorResult", JSON.stringify(result)!)
 	}
-	
+
 	JPUSHService.setMobileNumber(mobileNumber, completion = callback);
 }
 
