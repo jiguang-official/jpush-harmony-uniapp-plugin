@@ -1,19 +1,30 @@
 import { Data } from 'Assignables';
 import { App } from 'MarketplaceKit';
 import { Notification } from 'Foundation';
-import { Dictionary, Set, Error} from 'Swift';
+import { NSNotification } from 'CoreFoundation';
+
+import { Dictionary, Set, Error } from 'Swift';
 import { NSError } from 'Foundation';
 import { NSSet } from 'Foundation';
 import { UIDevice } from 'UIKit';
 import { ATTrackingManager, ATTrackingManagerAuthorizationStatus } from 'AppTrackingTransparency';
 import { ASIdentifierManager } from 'AdSupport';
 import { NotificationCenter } from 'Foundation';
-import { Selector } from 'Foundation';
+import { Selector, NSString } from 'Foundation';
 
 /* 引入 interface.uts 文件中定义的变量 */
 import { EventCallBackParams, EventCallBack } from '../interface.uts';
 
-const TAG = "JPUSH-uni-"
+const TAG = "| JIGUANG | JPUSH-uni-"
+
+// 统一日志方法
+function log(message : string, ...args : any[]) : void {
+	// 可以根据需要选择使用console.log或iOS的log
+	console.log(TAG, message)
+	// 如果需要使用iOS的log，可以取消注释下面的代码
+	// 构建完整的消息字符串
+	NSLog("%@ %@ ", TAG, message)
+}
 
 // 事件回调管理类
 class EventCallbackManager {
@@ -21,12 +32,12 @@ class EventCallbackManager {
 	private cachedEvents : Array<EventCallBack> = []
 
 	setEventCallBack(param : EventCallBackParams) : void {
-		console.log(TAG, "setEventCallBack")
+		log("setEventCallBack")
 		this.callBack = param
 
 		// 如果有缓存的事件，立即回调
 		if (this.cachedEvents.length > 0) {
-			console.log(TAG, "处理缓存事件，数量:", this.cachedEvents.length)
+			log("处理缓存事件，数量:", this.cachedEvents.length)
 			for (let event of this.cachedEvents) {
 				this.triggerCallBack(event)
 			}
@@ -36,14 +47,14 @@ class EventCallbackManager {
 
 	triggerCallBack(event : EventCallBack) : void {
 		if (this.callBack !== null) {
-			console.log(TAG, "触发回调")
+			log("触发回调")
 			if (this.callBack.callback !== null) {
 				this.callBack.callback(event)
 			} else {
-				console.log(TAG, "未设置回调函数，事件内容：", event)
+				log("未设置回调函数，事件内容：", event)
 			}
 		} else {
-			console.log(TAG, "回调未设置，缓存事件")
+			log("回调未设置，缓存事件")
 			this.cachedEvents.push(event)
 		}
 	}
@@ -53,8 +64,8 @@ class EventCallbackManager {
 	 * @param eventName 事件名称
 	 * @param eventData 事件数据（JSON字符串）
 	 */
-	triggerEvent(eventName: string, eventData: string) : void {
-		const callback: EventCallBack = {
+	triggerEvent(eventName : string, eventData : string) : void {
+		const callback : EventCallBack = {
 			eventName: eventName,
 			eventData: eventData
 		}
@@ -74,202 +85,204 @@ class EventCallbackManager {
 const eventCallbackManager = new EventCallbackManager()
 
 export type InitPushParams = {
-  appkey : string,
-  channel : string,
-  isProduction: boolean
+	appkey : string,
+	channel : string,
+	isProduction : boolean,
+	advertisingId : string
 }
 /**
  * iOS UTS插件实现 - 极光推送
  * 对应AppDelegate.m的功能
  */
 export class JGPushIOSPlugin implements UTSiOSHookProxy {
-    
-    // MARK: - 应用程序生命周期回调
-    
-    /**
-     * UTS插件创建时的回调
-     */
-    override onCreate(): void {
-        console.log("JGPushIOSPlugin onCreate")
-    }
-    
-    /**
-     * 应用正常启动时的回调
-     * 极光推送初始化
-     */
-    applicationDidFinishLaunchingWithOptions(application: UIApplication | null, launchOptions: Map<UIApplication.LaunchOptionsKey, any> | null = null): boolean {
-        console.log("JGPushIOSPlugin applicationDidFinishLaunchingWithOptions")
-        // 保存启动选项供后续使用
-        JGPushTool.launchOptions = launchOptions
-        return true
-    }
-    
-    /**
-     * 远程通知注册成功时的回调
-     * 极光推送：将deviceToken发送给服务端
-     */
-    didRegisterForRemoteNotifications(deviceToken: Data | null) {
-        console.log("JGPushIOSPlugin didRegisterForRemoteNotifications")
-        JGPushTool.registerDeviceToken(deviceToken)
-    }
-    
-    /**
-     * 远程通知注册失败时的回调
-     */
-    didFailToRegisterForRemoteNotifications(error: NSError | null) {       
-        console.log("JGPushIOSPlugin didFailToRegisterForRemoteNotifications", error)
-    }
-    
-    /**
-     * 收到远程通知时的回调
-     */
-    didReceiveRemoteNotification(userInfo: Map<AnyHashable, any> | null) {
-        console.log("JGPushIOSPlugin didReceiveRemoteNotification", userInfo)
-    }
+
+	// MARK: - 应用程序生命周期回调
+
+	/**
+	 * UTS插件创建时的回调
+	 */
+	onCreate() : void {
+		log("JGPushIOSPlugin onCreate")
+	}
+
+	/**
+	 * 应用正常启动时的回调
+	 * 极光推送初始化
+	 */
+	applicationDidFinishLaunchingWithOptions(application : UIApplication | null, launchOptions : Map<UIApplication.LaunchOptionsKey, any> | null = null) : boolean {
+		log("JGPushIOSPlugin applicationDidFinishLaunchingWithOptions")
+		// 保存启动选项供后续使用
+		JGPushTool.launchOptions = launchOptions
+		return true
+	}
+
+	/**
+	 * 远程通知注册成功时的回调
+	 * 极光推送：将deviceToken发送给服务端
+	 */
+	didRegisterForRemoteNotifications(deviceToken : Data | null) {
+		log("JGPushIOSPlugin didRegisterForRemoteNotifications")
+		JGPushTool.registerDeviceToken(deviceToken)
+	}
+
+	/**
+	 * 远程通知注册失败时的回调
+	 */
+	didFailToRegisterForRemoteNotifications(error : NSError | null) {
+		log("JGPushIOSPlugin didFailToRegisterForRemoteNotifications", error)
+	}
+
+	/**
+	 * 收到远程通知时的回调
+	 */
+	didReceiveRemoteNotification(userInfo : Map<AnyHashable, any> | null) {
+		log("JGPushIOSPlugin didReceiveRemoteNotification", userInfo)
+	}
 }
 
 /**
  * 极光推送模块实现
  */
 class JGPushModule implements JPUSHRegisterDelegate {
-    
-    launchOptions: Map<UIApplication.LaunchOptionsKey, any> | null = null
-    
-    /**
-     * 初始化极光推送
-     */
-    initPush(param: InitPushParams) {
-        console.log("JGPushModule initPush", param)
-        // 创建推送注册实体
-        const entity = JPUSHRegisterEntity.alloc().init()
-        entity.types = JPAuthorizationOptionAlert | JPAuthorizationOptionBadge | JPAuthorizationOptionSound | JPAuthorizationOptionProvidesAppNotificationSettings
-        
-        // 注册远程通知配置
-        JPUSHService.registerForRemoteNotificationConfig(entity, delegate: this)
-        
-        // 添加通知监听
-        const method = Selector("didReceiveCustomMessage:")
-        NotificationCenter.default.addObserver(this, selector: method, name: NSNotification.Name.kJPFNetworkDidReceiveMessageNotification, object: null)
-        
-        const method1 = Selector("networkDidLogin:")
-        NotificationCenter.default.addObserver(this, selector: method1, name: NSNotification.Name.kJPFNetworkDidLoginNotification, object: null)
-        
-        const method2 = Selector("networkDidClose:")
-        NotificationCenter.default.addObserver(this, selector: method2, name: NSNotification.Name.kJPFNetworkDidCloseNotification, object: null)
-        
-        // 获取广告标识符（IDFA）
-        let advertisingId: string = ""
-        
-        if (UIDevice.currentDevice.systemVersion.floatValue >= 14.0) {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                if status == ATTrackingManagerAuthorizationStatusAuthorized {
-                    advertisingId = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString
-                }
-            }
-        } else {
-            advertisingId = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString
-        }
-        
-        // 初始化极光推送服务
-        JPUSHService.setupWithOption(this.launchOptions, 
-                                   appKey: param.appkey,
-                                   channel: param.channel,
-                                   apsForProduction: param.isProduction,
-                                   advertisingIdentifier: advertisingId)
-        
-        console.log("极光推送SDK初始化完成")
-    }
-    
-    /**
-     * 注册设备令牌
-     */
-    registerDeviceToken(token: Data | null) {
-        console.log("JGPushModule registerDeviceToken", token)
-        JPUSHService.registerDeviceToken(token)
-    }
-    
-    /**
-     * 收到自定义消息回调
-     */
-    @objc didReceiveCustomMessage(notification: Notification) {
-        console.log("JGPushModule didReceiveCustomMessage", notification)
-        const userInfo = notification.userInfo
-        
-        eventCallbackManager.triggerEvent("onCustomMessage", JSON.stringify(userInfo as Dictionary<String, Any>))
-    }
-    
-    /**
-     * 网络连接成功回调
-     */
-    @objc networkDidLogin(notification: Notification) {
-        console.log("JGPushModule networkDidLogin", notification)
-        
-        eventCallbackManager.triggerEvent("onConnectStatus", "true")
-    }
-    
-    /**
-     * 网络连接关闭回调
-     */
-    @objc networkDidClose(notification: Notification) {
-        console.log("JGPushModule networkDidClose", notification)
-        
-        eventCallbackManager.triggerEvent("onConnectStatus", "false")
-    }
-    
-    /**
-     * 通知授权状态回调
-     */
-    jpushNotificationAuthorization(status: JPushAuthorizationStatus, withInfo: Map<AnyHashable, any>) {
-        console.log("JGPushModule jpushNotificationAuthorization", status, withInfo)
-        
-        if (status == JPushAuthorizationStatus.statusAuthorized) {
-            eventCallbackManager.triggerEvent("onNotificationStatus", "true")
-        } else {
-            eventCallbackManager.triggerEvent("onNotificationStatus", "false")
-        }
-    }
-    
-    /**
-     * 通知到达回调
-     */
-    jpushNotificationCenter(center: UNUserNotificationCenter, willPresent: UNNotification, withCompletionHandler: (code: Int) => Void) {
-        console.log("JGPushModule jpushNotificationCenter willPresent", center, willPresent)
-        const userInfo = willPresent.request.content.userInfo
-        
-        if ((willPresent.request.trigger?.isKind(of: UNPushNotificationTrigger.self)) != nil) {
-            JPUSHService.handleRemoteNotification(userInfo)
-        }
-        
-        eventCallbackManager.triggerEvent("onNotificationArrived", JSON.stringify(userInfo as Dictionary<String, Any>))
-        
-        completionHandler(NSInteger(UNNotificationPresentationOptions.alert.rawValue) |
-                             NSInteger(UNNotificationPresentationOptions.sound.rawValue) |
-                             NSInteger(UNNotificationPresentationOptions.badge.rawValue))
-    }
-    
-    /**
-     * 通知点击回调
-     */
-    jpushNotificationCenter(center: UNUserNotificationCenter, didReceive: UNNotificationResponse, withCompletionHandler: () => Void) {
-        console.log("JGPushModule jpushNotificationCenter didReceive", center, didReceive)
-        const userInfo = didReceive.notification.request.content.userInfo
-        
-        if ((didReceive.notification.request.trigger?.isKind(of: UNPushNotificationTrigger.self)) != nil) {
-            JPUSHService.handleRemoteNotification(userInfo)
-        }
-        
-        eventCallbackManager.triggerEvent("onNotificationClicked", JSON.stringify(userInfo as Dictionary<String, Any>))
-        
-        completionHandler()
-    }
-	
-	jpushNotificationCenter(center: UNUserNotificationCenter, @argumentLabel("openSettingsFor") notification: UNNotification) {
-		console.log("JGPushModule jpushNotificationCenter openSettingsFor", center, notification)
+
+	launchOptions : Map<UIApplication.LaunchOptionsKey, any> | null = null
+
+	/**
+	 * 初始化极光推送
+	 */
+	initPush(param : InitPushParams) {
+		log("JGPushModule initPush", param)
+		// 创建推送注册实体
+		const entity = JPUSHRegisterEntity()
+		const types = new JPAuthorizationOptions(rawValue = (JPAuthorizationOptions.alert.rawValue |
+			JPAuthorizationOptions.sound.rawValue |
+			JPAuthorizationOptions.badge.rawValue))
+		entity.types = Int(types.rawValue)
+
+		// 注册远程通知配置
+		JPUSHService.register(forRemoteNotificationConfig = entity, delegate = this)
+
+
+		const method = Selector("didReceiveCustomMessage:")
+		NotificationCenter.default.addObserver(this, selector = method, name = NSNotification.Name.jpfNetworkDidReceiveMessage, object = null)
+		// NotificationCenter.default.addObserver(this, selector=method, name=NSNotification.Name("kJPUSHNetworkDidReceiveMessageNotification"), object=null)
+
+		const method1 = Selector("networkDidLogin:")
+		NotificationCenter.default.addObserver(this, selector = method1, name = NSNotification.Name.jpfNetworkDidLogin, object = null)
+		// NotificationCenter.default.addObserver(this, selector=method1, name=NSNotification.Name("kJPFNetworkDidLoginNotification"), object=null)
+
+		const method2 = Selector("networkDidClose:")
+		NotificationCenter.default.addObserver(this, selector = method2, name = NSNotification.Name.jpfNetworkDidClose, object = null)
+
+		// 初始化极光推送服务
+		JPUSHService.setup(withOption = this.launchOptions, appKey = param.appkey, channel = param.channel, apsForProduction = param.isProduction, advertisingIdentifier = param.advertisingId)
+
+		log("极光推送SDK初始化完成")
 	}
+
+	/**
+	 * 注册设备令牌
+	 */
+	registerDeviceToken(token : Data | null) {
+		log("JGPushModule registerDeviceToken", token)
+		JPUSHService.registerDeviceToken(token!)
+	}
+
+	/**
+	 * 收到自定义消息回调
+	 */
+	@objc didReceiveCustomMessage(notification : Notification) {
+		log("JGPushModule didReceiveCustomMessage", notification)
+		const userInfo = notification.userInfo
+
+		if (userInfo !== null) {
+			const jsonString = JSON.stringify(userInfo! as Dictionary<String, Any>)
+			if (jsonString !== null) {
+				eventCallbackManager.triggerEvent("onCustomMessage", jsonString!)
+			}
+		}
+	}
+
+	/**
+	 * 网络连接成功回调
+	 */
+	@objc networkDidLogin(notification : Notification) {
+		log("JGPushModule networkDidLogin", notification)
+
+		eventCallbackManager.triggerEvent("onConnectStatus", "true")
+	}
+
+	/**
+	 * 网络连接关闭回调
+	 */
+	@objc networkDidClose(notification : Notification) {
+		log("JGPushModule networkDidClose", notification)
+
+		eventCallbackManager.triggerEvent("onConnectStatus", "false")
+	}
+
+	/**
+	 * iOS 10 Support - 应用在前台时收到通知
+	 */
+	jpushNotificationCenter(center : UNUserNotificationCenter, @argumentLabel("willPresent") notification : UNNotification, @argumentLabel("withCompletionHandler") completionHandler : (code : Int) => void) : void {
+		log("JGPushModule jpushNotificationCenter willPresent")
+		// Required
+		const userInfo = notification.request.content.userInfo
+		if ((notification.request.trigger?.isKind(of = UNPushNotificationTrigger.self)) != null) {
+			JPUSHService.handleRemoteNotification(userInfo)
+		}
+
+		const u = userInfo as Dictionary<String, Any>;
+		const jsonString = JSON.stringify(u)
+		eventCallbackManager.triggerEvent("onNotificationReceived", jsonString!)
+
+		completionHandler(Int(UNNotificationPresentationOptions.alert.rawValue) | Int(UNNotificationPresentationOptions.sound.rawValue) | Int(UNNotificationPresentationOptions.badge.rawValue))
+	}
+
+	/**
+	 * iOS 10 Support - 用户点击通知
+	 */
+	jpushNotificationCenter(center : UNUserNotificationCenter, @argumentLabel("didReceive") response : UNNotificationResponse, @argumentLabel("withCompletionHandler") completionHandler : () => void) : void {
+		log("JGPushModule jpushNotificationCenter didReceive")
+		// Required
+		const userInfo = response.notification.request.content.userInfo
+		if ((response.notification.request.trigger?.isKind(of = UNPushNotificationTrigger.self)) != null) {
+			JPUSHService.handleRemoteNotification(userInfo)
+
+		}
+
+		const u = userInfo as Dictionary<String, Any>;
+		const jsonString = JSON.stringify(u)
+		eventCallbackManager.triggerEvent("onNotificationOpened", jsonString!)
+		completionHandler() // 系统要求执行这个方法
+	}
+
+	/**
+	 * iOS 12 Support - 用户从通知设置界面进入应用
+	 */
+	jpushNotificationCenter(center : UNUserNotificationCenter, @argumentLabel("openSettingsFor") notification : UNNotification) : void {
+		log("JGPushModule jpushNotificationCenter openSettingsFor")
+		if (notification !== null && (notification.request.trigger?.isKind(of = UNPushNotificationTrigger.self)) != null) {
+			// 从通知界面直接进入应用
+			log("从通知界面直接进入应用")
+		} else {
+			// 从通知设置界面进入应用
+			log("从通知设置界面进入应用")
+		}
+	}
+
+	/**
+	 * 通知权限授权回调
+	 */
+	jpushNotificationAuthorization(status : JPAuthorizationStatus, @argumentLabel("withInfo") info : Map<AnyHashable, any> | null) : void {
+		log("JGPushModule jpushNotificationAuthorization", status)
+		// 处理通知权限状态变化
+	}
+
 }
 
 // 全局极光推送工具实例
-const JGPushTool: JGPushModule = new JGPushModule()
+const JGPushTool : JGPushModule = new JGPushModule()
 
 // MARK: - 导出函数
 
@@ -278,163 +291,188 @@ const JGPushTool: JGPushModule = new JGPushModule()
  * 添加事件回调
  */
 @UTSJS.keepAlive
-export function setEventCallBack(param: EventCallBackParams): void {
-    console.log("setEventCallBack", param)
-    eventCallbackManager.setEventCallBack(param)
+export function setEventCallBack(param : EventCallBackParams) : void {
+	log("setEventCallBack", param)
+	eventCallbackManager.setEventCallBack(param)
 }
 
 // MARK: - 极光推送API方法
 
+export function initPush(param : InitPushParams) : void {
+	log("initPush", param);
+	JGPushTool.initPush(param);
+}
+
 /**
  * 设置调试模式
  */
-export function setDebug(debug: boolean): void {
-    console.log("setDebug", debug)
-    JPUSHService.setLogOFF()
-    if (debug) {
-        JPUSHService.setDebugMode()
-    }
+export function setDebug(debug : boolean) : void {
+	log("setDebug", debug)
+	if (debug) {
+		JPUSHService.setDebugMode()
+	} else {
+		JPUSHService.setLogOFF()
+	}
 }
 
 /**
  * 获取RegistrationID
  */
-export function getRegistrationId(): string {
-    console.log("getRegistrationId")
-    return JPUSHService.registrationID()
+export function getRegistrationId() : string {
+	log("getRegistrationId")
+	return JPUSHService.registrationID()
 }
 
 /**
  * 设置标签
  */
-export function setTags(sequence: number, tags: string[]): void {
-    console.log("setTags", sequence, tags)
-    const tagSet = new Set<string>()
-    for (let tag of tags) {
-        tagSet.add(tag)
-    }
-    JPUSHService.setTags(tagSet, completion: { (iResCode: number, iTags: NSSet<NSString>, seq: number) in
-        console.log("setTags completion", iResCode)
-    }, seq: sequence)
+export function setTags(sequence : Int, tags : string[]) : void {
+	log("setTags", sequence, tags)
+	// 单独定义回调函数，并明确指定其类型
+	const callback : (iResCode : Int, iTags : Array | null, seq : Int) => void = (iResCode : Int, iTags : Array | null, seq : Int) => {
+		log("setTags completion", iResCode)
+	}
+	JPUSHSDKHelper.setTags(tags, completion = callback, seq = sequence)
 }
+
 
 /**
  * 添加标签
  */
-export function addTags(sequence: number, tags: string[]): void {
-    console.log("addTags", sequence, tags)
-    const tagSet = new Set<string>()
-    for (let tag of tags) {
-        tagSet.add(tag)
+export function addTags(sequence: Int, tags: string[]): void {
+    log("addTags", sequence, tags)
+    
+    const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
+        log("addTags completion", iResCode)
     }
-    JPUSHService.addTags(tagSet, completion: { (iResCode: number, iTags: NSSet<NSString>, seq: number) in
-        console.log("addTags completion", iResCode)
-    }, seq: sequence)
+    
+    JPUSHSDKHelper.addTags(tags, completion = callback, seq = sequence)
 }
 
 /**
  * 删除标签
  */
-export function deleteTags(sequence: number, tags: string[]): void {
-    console.log("deleteTags", sequence, tags)
-    const tagSet = new Set<string>()
-    for (let tag of tags) {
-        tagSet.add(tag)
+export function deleteTags(sequence: Int, tags: string[]): void {
+    log("deleteTags", sequence, tags)
+    
+    const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
+        log("deleteTags completion", iResCode)
     }
-    JPUSHService.deleteTags(tagSet, completion: { (iResCode: number, iTags: NSSet<NSString>, seq: number) in
-        console.log("deleteTags completion", iResCode)
-    }, seq: sequence)
+    
+    JPUSHSDKHelper.deleteTags(tags, completion = callback, seq = sequence)
 }
 
 /**
  * 清除所有标签
  */
-export function cleanTags(sequence: number): void {
-    console.log("cleanTags", sequence)
-    JPUSHService.cleanTags({ (iResCode: number, iTags: NSSet<NSString>, seq: number) in
-        console.log("cleanTags completion", iResCode)
-    }, seq: sequence)
+export function cleanTags(sequence: Int): void {
+    log("cleanTags", sequence)
+    
+    const callback : (iResCode: NSInteger, iTags: Array | null, seq: NSInteger) => void = (iResCode: NSInteger, iTags: Array | null, seq: NSInteger) => {
+        log("cleanTags completion", iResCode)
+    }
+    
+    JPUSHSDKHelper.cleanTags(callback, seq=sequence)
 }
 
 /**
  * 获取所有标签
  */
-export function getAllTags(sequence: number): void {
-    console.log("getAllTags", sequence)
-    JPUSHService.getAllTags({ (iResCode: number, iTags: NSSet<NSString>, seq: number) in
-        console.log("getAllTags completion", iResCode)
-    }, seq: sequence)
+export function getAllTags(sequence: Int): void {
+    log("getAllTags", sequence)
+    
+    const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
+        log("getAllTags completion", iResCode)
+    }
+    
+    JPUSHSDKHelper.getAllTags(callback, seq = sequence)
 }
 
 /**
  * 验证标签绑定状态
  */
-export function validTag(sequence: number, tag: string): void {
-    console.log("validTag", sequence, tag)
-    JPUSHService.validTag(tag, completion: { (iResCode: number, iTags: NSSet<NSString>, seq: number, isBind: boolean) in
-        console.log("validTag completion", iResCode, isBind)
-    }, seq: sequence)
+export function validTag(sequence: Int, tag: string): void {
+    log("validTag", sequence, tag)
+    
+    const callback = 
+	(iResCode: Int, iTags: Array | null, seq: Int, isBind: boolean) => {
+        log("validTag completion", iResCode, isBind)
+    }
+    JPUSHSDKHelper.validTag(tag, completion = callback, seq = sequence)
+    // JPUSHService.validTag(tag, completion = callback, seq = sequence)
 }
+
 
 /**
  * 设置别名
  */
-export function setAlias(sequence: number, alias: string): void {
-    console.log("setAlias", sequence, alias)
-    JPUSHService.setAlias(alias, completion: { (iResCode: number, iAlias: NSString, seq: number) in
-        console.log("setAlias completion", iResCode)
-    }, seq: sequence)
+export function setAlias(sequence : Int, alias : string) : void {
+	log("setAlias", sequence, alias)
+	
+	
+	const callback : (iResCode : Int, iAlias : String | null, seq : Int)  => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
+		log("setAlias completion", iResCode)
+	}
+	
+	JPUSHService.setAlias(alias, completion = callback, seq = sequence)
 }
+
 
 /**
  * 删除别名
  */
-export function deleteAlias(sequence: number): void {
-    console.log("deleteAlias", sequence)
-    JPUSHService.deleteAlias({ (iResCode: number, iAlias: NSString, seq: number) in
-        console.log("deleteAlias completion", iResCode)
-    }, seq: sequence)
+export function deleteAlias(sequence : Int) : void {
+	log("deleteAlias", sequence)
+	
+	const callback : (iResCode : Int, iAlias : String | null, seq : Int) => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
+		log("deleteAlias completion", iResCode)
+	}
+	
+	JPUSHService.deleteAlias(callback, seq = sequence)
 }
 
 /**
  * 获取别名
  */
-export function getAlias(sequence: number): void {
-    console.log("getAlias", sequence)
-    JPUSHService.getAlias({ (iResCode: number, iAlias: NSString, seq: number) in
-        console.log("getAlias completion", iResCode)
-    }, seq: sequence)
+export function getAlias(sequence : Int) : void {
+	log("getAlias", sequence)
+	
+	const callback : (iResCode : Int, iAlias : String | null, seq : Int) => void = (iResCode : Int, iAlias : String | null, seq : Int) => {
+		log("getAlias completion", iResCode)
+	}
+	
+	JPUSHService.getAlias(callback, seq = sequence)
 }
 
 /**
  * 设置手机号码
  */
-export function setMobileNumber(mobileNumber: string): void {
-    console.log("setMobileNumber", mobileNumber)
-    JPUSHService.setMobileNumber(mobileNumber, completion: { (error: NSError) in
-        if (error) {
-            console.log("setMobileNumber error", error)
-        } else {
-            console.log("setMobileNumber success")
-        }
-    })
+export function setMobileNumber(mobileNumber : string) : void {
+	log("setMobileNumber", mobileNumber)
+	
+	const callback : (error : NSError | null) => void = (error : NSError | null) => {
+		if (error !== null) {
+			log("setMobileNumber error", error);
+		} else {
+			log("setMobileNumber success");
+		}
+	}
+	
+	JPUSHService.setMobileNumber(mobileNumber, completion = callback);
 }
 
 /**
  * 设置角标数量
  */
-export function setBadgeNumber(curNum: number): void {
-    console.log("setBadgeNumber", curNum)
-    JPUSHService.setBadge(curNum)
+export function setBadgeNumber(curNum : Int) : void {
+	log("setBadgeNumber", curNum)
+	JPUSHService.setBadge(curNum)
 }
 
 /**
  * 重置角标
  */
-export function resetBadge(): void {
-    console.log("resetBadge")
-    JPUSHService.resetBadge()
+export function resetBadge() : void {
+	log("resetBadge")
+	JPUSHService.resetBadge()
 }
-
-
-
