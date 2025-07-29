@@ -23,14 +23,14 @@ function log(message : string, ...args : any[]) : void {
     let fullMessage = message
     if (args != null && args.length > 0) {
         for (let arg of args) {
-            fullMessage += " " + JSON.stringify((arg as string))!
+            fullMessage += " " + JSON.stringify(arg)!
         }
     }
 	// 可以根据需要选择使用console.log或iOS的log
-	console.log(TAG, message)
+	console.log(TAG, fullMessage)
 	// 如果需要使用iOS的log，可以取消注释下面的代码
 	// 构建完整的消息字符串
-	NSLog("%@ %@ ", TAG, message)
+	NSLog("%@ %@ ", TAG, fullMessage)
 }
 
 // 事件回调管理类
@@ -350,7 +350,7 @@ export function addTags(sequence: Int, tags: string[]): void {
     log("addTags", sequence, tags)
     
     const callback : (iResCode: Int, iTags: Array | null, seq: Int) => void = (iResCode: Int, iTags: Array | null, seq: Int) => {
-        log("addTags completion", iResCode)
+        log("addTags completion", iResCode,iTags,seq)
     }
     
     JPUSHSDKHelper.addTags(tags, completion = callback, seq = sequence)
