@@ -19,6 +19,13 @@ const TAG = "| JIGUANG | JPUSH-uni-"
 
 // 统一日志方法
 function log(message : string, ...args : any[]) : void {
+    // 这里拼接args
+    let fullMessage = message
+    if (args != null && args.length > 0) {
+        for (let arg of args) {
+            fullMessage += " " + JSON.stringify((arg as string))!
+        }
+    }
 	// 可以根据需要选择使用console.log或iOS的log
 	console.log(TAG, message)
 	// 如果需要使用iOS的log，可以取消注释下面的代码
