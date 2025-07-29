@@ -25,6 +25,11 @@ const TAG = "JPUSH-uni-"
 let APP_KEY : string | undefined = undefined
 let MY_WANT : Want | undefined = undefined
 
+// 获取应用上下文
+function getContext() : common.ApplicationContext {
+	return UTSHarmony.getUIAbilityContext().getApplicationContext()
+}
+
 UTSHarmony.onAppAbilityCreate((want : Want, launchParam : AbilityConstant.LaunchParam) => {
 	console.log(TAG, "onAppAbilityCreate")
 	if (undefined === APP_KEY) {
@@ -55,6 +60,13 @@ export const setDebug = function (b : boolean) : void {
 	console.log(TAG, "setDebug:" + b)
 	JPushInterface.setDebug(b)
 }
+
+// 设置长连接心跳周期
+export const setHeartbeatTime = function (heartbeatTime : number) : void {
+	console.log(TAG, "setHeartbeatTime:" + heartbeatTime)
+	JPushInterface.setHeartbeatTime(heartbeatTime)
+}
+
 export const setAppKey = function (appKey : string) {
 	console.log(TAG, "setAppKey")
 	JPushInterface.setAppKey(appKey)
@@ -66,6 +78,26 @@ export const setAppKey = function (appKey : string) {
 }
 export const setChannel = function (channel : string) {
 	JPushInterface.setChannel(channel)
+}
+
+// 配置用户通知权限申请方式
+export const setUserRequestNotificationPermission = function (enable : boolean) : void {
+	console.log(TAG, "setUserRequestNotificationPermission:" + enable)
+	JPushInterface.setUserRequestNotificationPermission(enable)
+}
+
+// 设置用户分群推送开关
+export const setSmartPushEnable = function (enable : boolean) : void {
+	console.log(TAG, "setSmartPushEnable:" + enable)
+	const context = getContext()
+	JPushInterface.setSmartPushEnable(context, enable)
+}
+
+// 设置用户洞察开关
+export const setDataInsightsEnable = function (enable : boolean) : void {
+	console.log(TAG, "setDataInsightsEnable:" + enable)
+	const context = getContext()
+	JPushInterface.setDataInsightsEnable(context, enable)
 }
 
 export const init = function (context : common.UIAbilityContext | common.AbilityStageContext | undefined) {
@@ -153,16 +185,59 @@ export const receiveExtraDataMessage = function (rNEAbility : RemoteNotification
 	return JPushInterface.receiveExtraDataMessage(rNEAbility, remoteNotificationInfo);
 }
 
-export const setListWifi = function (enable : boolean) {
-	JCollectControl.setListWifi(getContext() as common.ApplicationContext, enable);
+// 默认消息后台数据接收
+export const defaultMessageBackgroundData = function (data : pushCommon.PushPayload) : Promise<boolean> {
+	return JPushInterface.defaultMessageBackgroundData(data);
 }
 
-export const setGPS = function (enable : boolean) {
-	JCollectControl.setGPS(getContext() as common.ApplicationContext, enable);
+// 清除指定通知
+export const clearNotificationById = function (id : number) : void {
+	console.log(TAG, "clearNotificationById:" + id)
+	JPushInterface.clearNotification(id)
+}
+
+// 通过消息ID清除通知
+export const clearNotificationByMsgId = function (msgId : string) : void {
+	console.log(TAG, "clearNotificationByMsgId:" + msgId)
+	JPushInterface.clearNotificationByMsgId(msgId)
+}
+
+// 清除所有通知
+export const clearNotificationAll = function () : void {
+	console.log(TAG, "clearNotificationAll")
+	JPushInterface.clearNotificationAll()
+}
+
+// 上报自定义消息展示
+export const reportCustomDisplay = function (channel : number, msgId : string) : void {
+	console.log(TAG, "reportCustomDisplay channel:" + channel + " msgId:" + msgId)
+	JPushInterface.reportCustomDisplay(channel, msgId)
+}
+
+// 上报自定义消息点击
+export const reportCustomClick = function (channel : number, msgId : string) : void {
+	console.log(TAG, "reportCustomClick channel:" + channel + " msgId:" + msgId)
+	JPushInterface.reportCustomClick(channel, msgId)
+}
+
+// 上报通知展示
+export const reportNotificationDisplay = function (channel : number, msgId : string) : void {
+	console.log(TAG, "reportNotificationDisplay channel:" + channel + " msgId:" + msgId)
+	JPushInterface.reportNotificationDisplay(channel, msgId)
+}
+
+// 上报通知点击
+export const reportNotificationClick = function (channel : number, msgId : string) : void {
+	console.log(TAG, "reportNotificationClick channel:" + channel + " msgId:" + msgId)
+	JPushInterface.reportNotificationClick(channel, msgId)
+}
+
+export const setListWifi = function (enable : boolean) {
+	JCollectControl.setListWifi(getContext(), enable);
 }
 
 export const setEnableAppTerminate = function (enable : boolean) {
-	JCollectControl.setEnableAppTerminate(getContext() as common.ApplicationContext, enable);
+	JCollectControl.setEnableAppTerminate(getContext(), enable);
 }
 /**
  * 更多插件开发的信息详见：https://uniapp.dcloud.net.cn/plugin/uts-plugin.html
