@@ -446,7 +446,45 @@ setDataInsightsEnable(true)
 }
 ```
 
-### 5. onTagOperatorResult
+### 5. onNotifyMessageDismiss
+通知被清除时触发
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onNotifyMessageDismiss",
+    "eventData": "通知内容的JSON字符串"
+}
+```
+
+### 6. onRegister
+设备注册成功时触发
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onRegister",
+    "eventData": "registrationId字符串"
+}
+```
+
+### 7. onCommandResult
+命令执行结果回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onCommandResult",
+    "eventData": {
+        "cmd": "命令类型",
+        "errorCode": 0,
+        "msg": "消息",
+        "extra": "额外数据"
+    }
+}
+```
+
+### 8. onTagOperatorResult
 标签操作结果回调
 
 **回调数据格式：**
@@ -462,7 +500,23 @@ setDataInsightsEnable(true)
 }
 ```
 
-### 6. onAliasOperatorResult
+### 9. onCheckTagOperatorResult
+检查标签操作结果回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onCheckTagOperatorResult",
+    "eventData": {
+        "code": 0,
+        "tags": ["tag1"],
+        "sequence": 1,
+        "isBind": true
+    }
+}
+```
+
+### 10. onAliasOperatorResult
 别名操作结果回调
 
 **回调数据格式：**
@@ -477,7 +531,7 @@ setDataInsightsEnable(true)
 }
 ```
 
-### 7. onMobileNumberOperatorResult
+### 11. onMobileNumberOperatorResult
 手机号码操作结果回调
 
 **回调数据格式：**
@@ -489,6 +543,109 @@ setDataInsightsEnable(true)
         "message": "success",
         "mobileNumber": "13800138000",
         "sequence": 1
+    }
+}
+```
+
+### 12. onPropertyOperatorResult
+属性操作结果回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onPropertyOperatorResult",
+    "eventData": {
+        "code": 0,
+        "alias": "user123",
+        "tags": ["tag1", "tag2"],
+        "sequence": 1
+    }
+}
+```
+
+### 13. onNotificationSettingsCheck
+通知设置检查回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onNotificationSettingsCheck",
+    "eventData": {
+        "isOn": true,
+        "source": 1
+    }
+}
+```
+
+### 14. onNotifyMessageUnShow
+通知未显示回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onNotifyMessageUnShow",
+    "eventData": "通知内容的JSON字符串"
+}
+```
+
+### 15. onInAppMessageShow
+应用内消息展示回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onInAppMessageShow",
+    "eventData": "应用内消息内容的JSON字符串"
+}
+```
+
+### 16. onInAppMessageClick
+应用内消息点击回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onInAppMessageClick",
+    "eventData": "应用内消息内容的JSON字符串"
+}
+```
+
+### 17. onGeofenceReceived
+拉取地理围栏列表回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onGeofenceReceived",
+    "eventData": "地理围栏列表的JSON字符串"
+}
+```
+
+### 18. onMultiActionClicked
+多操作按钮点击回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onMultiActionClicked",
+    "eventData": {
+        "action": "按钮动作",
+        "extras": "额外数据"
+    }
+}
+```
+
+### 19. onGeofenceRegion
+触发地理围栏回调
+
+**回调数据格式：**
+```json
+{
+    "eventName": "onGeofenceRegion",
+    "eventData": {
+        "geofence": "地理围栏标识",
+        "longitude": 116.397128,
+        "latitude": 39.916527
     }
 }
 ```
@@ -514,14 +671,50 @@ setEventCallBack({
             case 'onClickMessage':
                 console.log('点击通知:', event.eventData)
                 break
+            case 'onNotifyMessageDismiss':
+                console.log('通知被清除:', event.eventData)
+                break
+            case 'onRegister':
+                console.log('注册成功:', event.eventData)
+                break
+            case 'onCommandResult':
+                console.log('命令结果:', event.eventData)
+                break
             case 'onTagOperatorResult':
                 console.log('标签操作结果:', event.eventData)
+                break
+            case 'onCheckTagOperatorResult':
+                console.log('检查标签结果:', event.eventData)
                 break
             case 'onAliasOperatorResult':
                 console.log('别名操作结果:', event.eventData)
                 break
             case 'onMobileNumberOperatorResult':
                 console.log('手机号码操作结果:', event.eventData)
+                break
+            case 'onPropertyOperatorResult':
+                console.log('属性操作结果:', event.eventData)
+                break
+            case 'onNotificationSettingsCheck':
+                console.log('通知设置检查:', event.eventData)
+                break
+            case 'onNotifyMessageUnShow':
+                console.log('通知未显示:', event.eventData)
+                break
+            case 'onInAppMessageShow':
+                console.log('应用内消息展示:', event.eventData)
+                break
+            case 'onInAppMessageClick':
+                console.log('应用内消息点击:', event.eventData)
+                break
+            case 'onGeofenceReceived':
+                console.log('地理围栏列表:', event.eventData)
+                break
+            case 'onMultiActionClicked':
+                console.log('多操作按钮点击:', event.eventData)
+                break
+            case 'onGeofenceRegion':
+                console.log('地理围栏触发:', event.eventData)
                 break
         }
     }
@@ -551,23 +744,3 @@ setMobileNumber(3, "13800138000")
 setSmartPushEnable(true)
 setDataInsightsEnable(true)
 ```
-
-## 注意事项
-
-1. **初始化顺序**：必须先调用 `setEventCallBack` 设置回调，再调用 `init` 初始化
-2. **序列号管理**：每个操作都需要唯一的序列号，用于区分不同的操作结果
-3. **回调处理**：所有异步操作的结果都通过事件回调返回
-4. **权限要求**：Android平台需要配置推送证书和权限
-5. **生命周期管理**：需要在应用生命周期中调用相应的方法
-6. **调试模式**：开发阶段建议开启调试模式，生产环境请关闭
-
-## 错误码说明
-
-- `0`: 操作成功
-- 其他值: 操作失败，具体错误码请参考极光推送官方文档
-
-## 版本信息
-
-- 插件版本：基于极光推送SDK
-- 支持平台：Android
-- 最低Android版本：Android 4.0+ 
