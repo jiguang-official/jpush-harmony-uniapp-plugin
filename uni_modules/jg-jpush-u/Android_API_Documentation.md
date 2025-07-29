@@ -413,35 +413,35 @@ setDataInsightsEnable(true)
 }
 ```
 
-### 2. onConnectStatus
+### 2. onConnected
 连接状态变化时触发
 
 **回调数据格式：**
 ```json
 {
-    "eventName": "onConnectStatus",
+    "eventName": "onConnected",
     "eventData": "true"  // 或 "false"
 }
 ```
 
-### 3. onNotificationReceived
+### 3. onNotifyMessageArrived
 应用在前台收到通知时触发
 
 **回调数据格式：**
 ```json
 {
-    "eventName": "onNotificationReceived",
+    "eventName": "onNotifyMessageArrived",
     "eventData": "通知内容的JSON字符串"
 }
 ```
 
-### 4. onNotificationOpened
+### 4. onClickMessage
 用户点击通知时触发
 
 **回调数据格式：**
 ```json
 {
-    "eventName": "onNotificationOpened",
+    "eventName": "onClickMessage",
     "eventData": "通知内容的JSON字符串"
 }
 ```
@@ -505,13 +505,13 @@ setEventCallBack({
             case 'onCustomMessage':
                 console.log('收到自定义消息:', event.eventData)
                 break
-            case 'onConnectStatus':
+            case 'onConnected':
                 console.log('连接状态:', event.eventData)
                 break
-            case 'onNotificationReceived':
+            case 'onNotifyMessageArrived':
                 console.log('收到通知:', event.eventData)
                 break
-            case 'onNotificationOpened':
+            case 'onClickMessage':
                 console.log('点击通知:', event.eventData)
                 break
             case 'onTagOperatorResult':

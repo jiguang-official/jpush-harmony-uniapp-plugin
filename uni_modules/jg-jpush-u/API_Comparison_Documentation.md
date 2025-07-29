@@ -143,9 +143,9 @@
 | 事件类型 | iOS | Android | HarmonyOS | 说明 |
 |----------|-----|---------|-----------|------|
 | 自定义消息 | `onCustomMessage` | `onCustomMessage` | `onCustomMessage` | 三个平台一致 |
-| 连接状态 | `onConnected` | `onConnectStatus` | `onConnectStatus` | iOS使用不同名称 |
-| 收到通知 | `onNotifyMessageArrived` | `onNotificationReceived` | `onNotificationReceived` | iOS使用不同名称 |
-| 点击通知 | `onClickMessage` | `onNotificationOpened` | `onNotificationOpened` | iOS使用不同名称 |
+| 连接状态 | `onConnected` | `onConnected` | `onConnectStatus` | HarmonyOS使用不同名称 |
+| 收到通知 | `onNotifyMessageArrived` | `onNotifyMessageArrived` | `onNotificationReceived` | HarmonyOS使用不同名称 |
+| 点击通知 | `onClickMessage` | `onClickMessage` | `onNotificationOpened` | HarmonyOS使用不同名称 |
 | 标签操作结果 | `onTagOperatorResult` | `onTagOperatorResult` | `onTagOperatorResult` | 三个平台一致 |
 | 别名操作结果 | `onAliasOperatorResult` | `onAliasOperatorResult` | `onAliasOperatorResult` | 三个平台一致 |
 | 手机号码操作结果 | `onMobileNumberOperatorResult` | `onMobileNumberOperatorResult` | `onMobileNumberOperatorResult` | 三个平台一致 |
