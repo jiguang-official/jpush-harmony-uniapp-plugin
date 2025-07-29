@@ -89,10 +89,6 @@ export const getRegistrationId = function () : string {
 	return JPushInterface.getRegistrationID(UTSAndroid.getAppContext())
 }
 
-export const getUdid = function () : string {
-	console.log(TAG, "getUdid")
-	return JPushInterface.getUdid(UTSAndroid.getAppContext())
-}
 
 export const setLatestNotificationNumber = function (maxNum : Int) {
 	console.log(TAG, "setLatestNotificationNumber", maxNum)
@@ -234,20 +230,6 @@ export const setDataInsightsEnable = function (isEnable : boolean) {
 	JPushInterface.setDataInsightsEnable(UTSAndroid.getAppContext(), isEnable)
 }
 
-export const setThirdPushEnable = function (enable : boolean) {
-	console.log(TAG, "setThirdPushEnable", enable)
-	JPushInterface.setThirdPushEnable(UTSAndroid.getAppContext(), enable)
-}
-
-export const setThirdToken = function (thidToken : string) {
-	console.log(TAG, "setThirdToken", thidToken)
-	JPushInterface.setThirdToken(UTSAndroid.getAppContext(), thidToken)
-}
-
-export const setHeartbeatInterval = function (heartbeatInterval : Int) {
-	console.log(TAG, "setHeartbeatInterval", heartbeatInterval)
-	JPushInterface.setHeartbeatInterval(UTSAndroid.getAppContext(), heartbeatInterval)
-}
 
 @UTSJS.keepAlive
 export function setEventCallBack(param : EventCallBackParams) : void {
