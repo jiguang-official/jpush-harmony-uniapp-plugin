@@ -95,8 +95,8 @@ export const setLatestNotificationNumber = function (maxNum : Int) {
 	JPushInterface.setLatestNotificationNumber(UTSAndroid.getAppContext(), maxNum)
 }
 
-export const clearAllNotifications = function () {
-	console.log(TAG, "clearAllNotifications")
+export const clearNotificationAll = function () {
+	console.log(TAG, "clearNotificationAll")
 	JPushInterface.clearAllNotifications(UTSAndroid.getAppContext())
 }
 

@@ -185,7 +185,7 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         Log.e(PushMessageReceiver.TAG, "[onMessage] " + customMessage.toString());
         
         // 触发自定义消息回调
-        this.triggerEventCallback('onMessage', this.convertCustomMessageToJson(customMessage));
+        this.triggerEventCallback('onCustomMessage', this.convertCustomMessageToJson(customMessage));
     }
 
     /**
@@ -207,7 +207,7 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         super.onNotifyMessageOpened(context, message);
         
         // 触发通知点击回调
-        this.triggerEventCallback('onNotifyMessageOpened', this.convertNotificationMessageToJson(message));
+        this.triggerEventCallback('onClickMessage', this.convertNotificationMessageToJson(message));
     }
 
     /**
