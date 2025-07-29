@@ -21,6 +21,7 @@
 		setDebug,
 		setChannel,
 		init,
+		initPush,
 		getRegistrationId,
 		setEventCallBack,
 		addTags,
@@ -54,8 +55,19 @@
 			console.log("JPUSH-", 'push vue callback eventData:' + res.eventData);
 		}
 	})
+	
+	setDebug(true)
+	if(uni.getSystemInfoSync().platform !== "ios"){
+		init()
+	}else{
+		initPush({
+			appkey: "4fcc3e237eec4c4fb804ad49",
+			channel: "demo",
+			isProduction: false,
+			advertisingId:""
+		})
+	}
 
-	init();
 
 
 	let ClearMsg = () => {
@@ -74,14 +86,9 @@
 		// #ifdef APP-PLUS
 		getAllTags(2)
 		// #endif
-		
+
 		// #ifdef APP-HARMONY
 		getTags(2, 1)
-		// #endif
-		
-		// #ifdef APP-PLUS-IOS
-		// iOS平台目前暂未实现getTags方法
-		console.log("iOS平台暂不支持getTags方法")
 		// #endif
 	}
 
