@@ -1,0 +1,4 @@
+const TAG = "JPUSH-uni-"
+export const init = function () {
+	console.log(TAG, "init fcm")
+}

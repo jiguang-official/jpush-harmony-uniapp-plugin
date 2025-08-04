@@ -1,0 +1,19 @@
+{
+	"dependencies": [
+		"cn.jiguang.sdk.plugin:fcm:5.8.0",
+		"com.google.firebase:firebase-messaging:24.1.2"
+	],
+	"minSdkVersion": "21",
+	"project": {
+  		"plugins": [
+			"com.google.gms.google-services"
+  		],
+  		"dependencies": [
+			"com.google.gms:google-services:4.4.2"
+  		],
+		"repositories": [
+			"google()",
+			"mavenCentral()"
+		]
+	}
+}
