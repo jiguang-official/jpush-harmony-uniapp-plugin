@@ -1,0 +1,13 @@
+{
+	"dependencies": [
+		"cn.jiguang.sdk.plugin:nio:5.8.0"
+
+	],
+	"minSdkVersion": "21",
+	"project": {
+		"repositories": [
+			"google()",
+			"mavenCentral()"
+		]
+	}
+}
