@@ -45,6 +45,19 @@
 }
 ```
 
+### 2.2 厂商通道配置
+
+如需使用厂商推送通道，请参考以下配置文档：
+
+- **小米推送**: [jg-jpush-u-xiaomi 配置文档](./jg-jpush-u-xiaomi/readme.md)
+- **华为推送**: [jg-jpush-u-huawei 配置文档](./jg-jpush-u-huawei/readme.md)
+- **荣耀推送**: [jg-jpush-u-honor 配置文档](./jg-jpush-u-honor/readme.md)
+- **魅族推送**: [jg-jpush-u-meizu 配置文档](./jg-jpush-u-meizu/readme.md)
+- **OPPO推送**: [jg-jpush-u-oppo 配置文档](./jg-jpush-u-oppo/readme.md)
+- **VIVO推送**: [jg-jpush-u-vivo 配置文档](./jg-jpush-u-vivo/readme.md)
+- **FCM推送**: [jg-jpush-u-fcm 配置文档](./jg-jpush-u-fcm/readme.md)
+- **蔚来推送**: [jg-jpush-u-nio 配置文档](./jg-jpush-u-nio/readme.md)
+
 ## 3. 代码集成
 
 ### 3.1 引入插件
