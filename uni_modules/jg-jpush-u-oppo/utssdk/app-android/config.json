@@ -1,0 +1,16 @@
+{
+	"dependencies": [
+		"cn.jiguang.sdk.plugin:oppo:5.8.0",
+		"com.google.code.gson:gson:2.10.1",
+		"commons-codec:commons-codec:1.6",
+		"androidx.annotation:annotation:1.1.0"
+
+	],
+	"minSdkVersion": "21",
+	"project": {
+		"repositories": [
+			"google()",
+			"mavenCentral()"
+		]
+	}
+}
