@@ -1,7 +1,7 @@
 {
   "id": "jg-jpush-u",
   "displayName": "jg-jpush-u",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "jg-jpush-u",
   "keywords": [
     "jg-jpush-u"
@@ -57,9 +57,18 @@
           "app": {
             "vue": "-",
             "nvue": "-",
-            "android": "√",
-            "ios": "√",
-            "harmony": "√"
+            "android": {
+                "extVersion": "1.1.1",
+                "minVersion": "21"
+            },
+            "ios": {
+                "extVersion": "1.1.1",
+                "minVersion": "12"
+            },
+            "harmony": {
+                "extVersion": "1.0.0",
+                "minVersion": "12"
+            }
           },
           "mp": {
             "weixin": "-",
@@ -83,9 +92,18 @@
             "chrome": "-"
           },
           "app": {
-            "android": "-",
-            "ios": "-",
-            "harmony": "-"
+            "android": {
+                "extVersion": "1.1.1",
+                "minVersion": "21"
+            },
+            "ios": {
+                "extVersion": "1.1.1",
+                "minVersion": "12"
+            },
+            "harmony": {
+                "extVersion": "1.0.0",
+                "minVersion": "12"
+            }
           },
           "mp": {
             "weixin": "-"
