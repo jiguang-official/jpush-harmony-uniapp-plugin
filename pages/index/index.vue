@@ -17,10 +17,35 @@
 	import {
 		ref
 	} from 'vue';
+	// import {
+	// 	init as initXiaomi
+	// } from "@/uni_modules/jg-jpush-u-xiaomi"
+	// import {
+	// 	init as initHuawei
+	// } from "@/uni_modules/jg-jpush-u-huawei"
+	// import {
+	// 	init as initFcm
+	// } from "@/uni_modules/jg-jpush-u-fcm"
+	// import {
+	// 	init as initNio
+	// } from "@/uni_modules/jg-jpush-u-nio"
+	// import {
+	// 	init as initHonor
+	// } from "@/uni_modules/jg-jpush-u-honor"
+	// import {
+	// 	init as initMeizu
+	// } from "@/uni_modules/jg-jpush-u-meizu"
+	// import {
+	// 	init as initOppo
+	// } from "@/uni_modules/jg-jpush-u-oppo"
+	// import {
+	// 	init as initVivo
+	// } from "@/uni_modules/jg-jpush-u-vivo"
+
 	import {
+		init,
 		setDebug,
 		setChannel,
-		init,
 		initPush,
 		getRegistrationId,
 		setEventCallBack,
