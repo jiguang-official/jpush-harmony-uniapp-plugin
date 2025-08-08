@@ -2,7 +2,7 @@
 
 # 因uniapp插件平台在整改，所以插件只能直接从这个库下载
 
-![](README_files/1.jpg)
+![](README_files/2.jpg)
 
 想用哪个操作，复制到对应的插件文件夹到自己项目的uni_modules下就可以了。
 
