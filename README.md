@@ -1,5 +1,12 @@
 # jg-uniapp-demo
 
+# 因uniapp插件平台在整改，
+# 接到网信办要求，正在整改插件市场，暂停新插件审核，恢复时间另行通知。
+
+
+
+
+
 
 ## 1. 极光推送平台配置
 
@@ -9,8 +16,8 @@
 2. 创建新应用或选择现有应用
 3. 记录应用的AppKey
 
-- [插件地址](https://ext.dcloud.net.cn/plugin?name=jg-jpush-u)
-- 
+<!-- - [插件地址](https://ext.dcloud.net.cn/plugin?name=jg-jpush-u)
+- --> 
 - [android 配置](./uni_modules/jg-jpush-u/Android_Integration_Guide.md)
 - [鸿蒙 配置](./uni_modules/jg-jpush-u/readme_me.md)
 - [ios 配置](./uni_modules/jg-jpush-u/iOS_Integration_Guide.md)
