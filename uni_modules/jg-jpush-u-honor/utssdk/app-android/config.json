@@ -1,13 +1,14 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:honor:5.8.0"
+		"cn.jiguang.sdk.plugin:honor:5.9.0"
 
 	],
 	"minSdkVersion": "21",
 	"project": {
 		"repositories": [
 			"google()",
-			"mavenCentral()"
+			"mavenCentral()",
+			"maven { url 'https://developer.hihonor.com/repo' }"
 		]
 	}
 }

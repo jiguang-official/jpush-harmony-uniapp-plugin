@@ -1,7 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:fcm:5.8.0",
-		"com.google.firebase:firebase-messaging:24.1.2"
+		"cn.jiguang.sdk.plugin:fcm:5.9.0"
 	],
 	"minSdkVersion": "21",
 	"project": {
