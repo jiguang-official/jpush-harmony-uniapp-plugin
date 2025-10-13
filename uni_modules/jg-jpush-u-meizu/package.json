@@ -1,7 +1,7 @@
 {
 	"id": "jg-jpush-u-meizu",
 	"displayName": "jg-jpush-u-meizu",
-	"version": "1.0.0",
+	"version": "1.1.2",
 	"description": "jg-jpush-u-meizu",
 	"keywords": [
         "jg-jpush-u-meizu"
@@ -9,8 +9,8 @@
 	"repository": "",
 	"engines": {
 		"HBuilderX": "^3.6.8",
-		"uni-app": "^3.1.0",
-		"uni-app-x": "^3.1.0"
+		"uni-app": "^4.75",
+		"uni-app-x": "^4.75"
 	},
 	"dcloudext": {
 		"type": "uts",
@@ -26,23 +26,23 @@
 			"qq": ""
 		},
 		"declaration": {
-			"ads": "",
-			"data": "",
-			"permissions": ""
+			"ads": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件",
+			"data": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件",
+			"permissions": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件"
 		},
 		"npmurl": "",
-		"darkmode": "-",
-		"i18n": "-",
-		"widescreen": "-"
+		"darkmode": "x",
+		"i18n": "x",
+		"widescreen": "x"
 	},
 	"uni_modules": {
 		"dependencies": [],
 		"encrypt": [],
 		"platforms": {
 			"cloud": {
-				"tcb": "-",
-				"aliyun": "-",
-				"alipay": "-"
+				"tcb": "√",
+				"aliyun": "√",
+				"alipay": "√"
 			},
 			"client": {
 				"uni-app": {
@@ -57,9 +57,9 @@
 					"app": {
 						"vue": "-",
 						"nvue": "-",
-						"android": "-",
-						"ios": "-",
-						"harmony": "-"
+						"android": "√",
+						"ios": "x",
+						"harmony": "x"
 					},
 					"mp": {
 						"weixin": "-",
@@ -83,9 +83,9 @@
 						"chrome": "-"
 					},
 					"app": {
-						"android": "-",
-						"ios": "-",
-						"harmony": "-"
+						"android": "√",
+						"ios": "x",
+						"harmony": "x"
 					},
 					"mp": {
 						"weixin": "-"
