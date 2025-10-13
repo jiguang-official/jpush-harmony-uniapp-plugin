@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk:jpush:5.8.0"
+		"cn.jiguang.sdk:jpush:5.9.0"
 
 	],
 	"minSdkVersion": "21",
