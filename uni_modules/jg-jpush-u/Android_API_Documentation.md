@@ -8,12 +8,29 @@
 
 ### 1. 初始化与配置
 
-#### init()
+#### init(appKey?: string)
 初始化极光推送服务
+
+**参数：**
+- `appKey`: string (可选) - 极光推送应用的AppKey，如果不传入则使用manifestPlaceholders.json中配置的AppKey
+
+**重要说明：**
+- 如果使用动态AppKey（传入appKey参数），则需要在`nativeResources/android/manifestPlaceholders.json`中将`JPUSH_APPKEY`设置为空字符串：
+  ```json
+  {
+    "JPUSH_APPKEY": "",
+    "JPUSH_CHANNEL": "your_channel_name"
+  }
+  ```
+- 如果不传入appKey参数，则使用manifestPlaceholders.json中配置的AppKey值
 
 **示例：**
 ```typescript
+// 使用manifestPlaceholders.json中配置的AppKey
 init()
+
+// 动态设置AppKey（需要将manifestPlaceholders.json中的JPUSH_APPKEY设置为空字符串）
+init("你的appkey")
 ```
 
 #### setDebug(debug: boolean)
@@ -734,8 +751,11 @@ setEventCallBack({
 })
 
 // 2. 初始化推送服务
+// 方式1：使用manifestPlaceholders.json中配置的AppKey
 init()
 
+// 方式2：动态设置AppKey（需要将manifestPlaceholders.json中的JPUSH_APPKEY设置为空字符串）
+// init("你的appkey")
 // 3. 开启调试模式
 setDebug(true)
 

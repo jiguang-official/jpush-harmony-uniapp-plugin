@@ -1,4 +1,6 @@
 import JPushInterface from 'cn.jpush.android.api.JPushInterface'
+import JCoreInterface from 'cn.jiguang.api.JCoreInterface'
+import JPushConfig from 'cn.jpush.android.data.JPushConfig'
 
 export * from './PushMessageReceiver.uts'
 export { PushService } from "./PushService.uts"
@@ -54,9 +56,17 @@ class EventCallbackManager {
 // 全局事件回调管理器实例
 export const eventCallbackManager = new EventCallbackManager()
 
-export const init = function () {
-	console.log(TAG, "init")
-	JPushInterface.init(UTSAndroid.getAppContext())
+export const init = function (appKey? : string) {
+	if (appKey !== null) {
+		console.log(TAG, "init with appKey", appKey)
+		// 创建JPushConfig并设置appKey
+		const config = new JPushConfig()
+		config.setjAppKey(appKey)
+		JPushInterface.init(UTSAndroid.getAppContext(), config)
+	} else {
+		console.log(TAG, "init without appKey")
+		JPushInterface.init(UTSAndroid.getAppContext())
+	}
 }
 
 export const setDebug = function (debug : boolean) {
@@ -230,6 +240,13 @@ export const setDataInsightsEnable = function (isEnable : boolean) {
 	JPushInterface.setDataInsightsEnable(UTSAndroid.getAppContext(), isEnable)
 }
 
+export const testCountryCode = function (code:string) {
+	JCoreInterface.testCountryCode(UTSAndroid.getAppContext(), code)
+}
+
+export const setCountryCode = function (code:string) {
+	JCoreInterface.setCountryCode(UTSAndroid.getAppContext(), code)
+}
 
 @UTSJS.keepAlive
 export function setEventCallBack(param : EventCallBackParams) : void {

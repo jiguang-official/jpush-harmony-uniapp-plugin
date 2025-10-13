@@ -26,6 +26,7 @@
 
 在 `nativeResources/android/` 目录下创建或修改 `manifestPlaceholders.json` 文件：
 
+#### 方式1：使用配置文件中的AppKey
 ```json
 {
   "JPUSH_APPKEY": "your_jpush_appkey_here",
@@ -33,9 +34,23 @@
 }
 ```
 
+#### 方式2：使用动态AppKey（在代码中设置）
+```json
+{
+  "JPUSH_APPKEY": "",
+  "JPUSH_CHANNEL": "your_channel_name"
+}
+```
+
 **参数说明：**
-- `JPUSH_APPKEY`: 极光推送应用的AppKey（必填）
+- `JPUSH_APPKEY`: 
+  - 如果使用配置文件中的AppKey，填写实际的AppKey值
+  - 如果使用动态AppKey（在代码中通过`init("你的appkey")`设置），则填写空字符串`""`
 - `JPUSH_CHANNEL`: 应用渠道标识（必填，如：developer-default、huawei、xiaomi等）
+
+**重要说明：**
+- 如果计划在代码中动态设置AppKey，必须将`JPUSH_APPKEY`设置为空字符串，否则会导致配置冲突
+- 动态AppKey的使用方式：`init("你的appkey")`
 
 **示例配置：**
 ```json
