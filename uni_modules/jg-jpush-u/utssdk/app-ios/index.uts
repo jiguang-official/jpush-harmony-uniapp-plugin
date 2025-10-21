@@ -55,8 +55,8 @@ class EventCallbackManager {
 	triggerCallBack(event : EventCallBack) : void {
 		if (this.callBack !== null) {
 			log("触发回调")
-			if (this.callBack.callback !== null) {
-				this.callBack.callback(event)
+			if (this.callBack!.callback !== null) {
+				this.callBack!.callback!(event)
 			} else {
 				log("未设置回调函数，事件内容：", event)
 			}
@@ -84,7 +84,7 @@ class EventCallbackManager {
 	}
 
 	hasCallBack() : boolean {
-		return this.callBack !== null && this.callBack.callback !== null
+		return this.callBack !== null && this.callBack!.callback !== null
 	}
 }
 
@@ -319,6 +319,18 @@ export function setDebug(debug : boolean) : void {
 		JPUSHService.setDebugMode()
 	} else {
 		JPUSHService.setLogOFF()
+	}
+}
+
+/**
+ * 设置进入后台是否允许长连接
+ */
+export function setBackgroundEnable(isEnable : boolean) : void {
+	log("setBackgroundEnable:", isEnable)
+	if (isEnable) {
+		JPUSHService.setBackgroundEnable(true)
+	} else {
+		JPUSHService.setBackgroundEnable(false)
 	}
 }
 
