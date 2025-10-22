@@ -1,7 +1,7 @@
 {
 	"id": "jg-jpush-u-oppo",
 	"displayName": "jg-jpush-u-oppo",
-	"version": "1.1.2",
+	"version": "1.1.3",
 	"description": "jg-jpush-u-oppo",
 	"keywords": [
         "jg-jpush-u-oppo"
@@ -40,9 +40,9 @@
 		"encrypt": [],
 		"platforms": {
 			"cloud": {
-				"tcb": "√",
-				"aliyun": "√",
-				"alipay": "√"
+				"tcb": "y",
+				"aliyun": "y",
+				"alipay": "y"
 			},
 			"client": {
 				"uni-app": {
@@ -90,7 +90,12 @@
 					"mp": {
 						"weixin": "-"
 					}
-				}
+                },
+                "App": {
+                    "app-android": "u",
+                    "app-harmony": "u",
+                    "app-ios": "u"
+                }
 			}
 		}
 	}
