@@ -23,18 +23,20 @@ class EventCallbackManager {
 		// 如果有缓存的事件，立即回调
 		if (this.cachedEvents.length > 0) {
 			console.log(TAG, "处理缓存事件，数量:", this.cachedEvents.length)
-			for (let event of this.cachedEvents) {
-				this.triggerCallBack(event)
+			for (let i = 0; i < this.cachedEvents.length; i++) {
+				this.triggerCallBack(this.cachedEvents[i])
 			}
 			this.cachedEvents = []
 		}
 	}
 
 	triggerCallBack(event : EventCallBack) : void {
-		if (this.callBack !== null) {
+		const callBack = this.callBack
+		if (callBack !== null) {
 			console.log(TAG, "触发回调")
-			if (this.callBack.callback !== null) {
-				this.callBack.callback(event)
+			const callback = callBack.callback
+			if (callback !== null) {
+				callback(event)
 			} else {
 				console.log(TAG, "未设置回调函数，事件内容：", event)
 			}
@@ -49,7 +51,8 @@ class EventCallbackManager {
 	}
 
 	hasCallBack() : boolean {
-		return this.callBack !== null && this.callBack.callback !== null
+		const callBack = this.callBack
+		return callBack !== null && callBack.callback !== null
 	}
 }
 
@@ -119,8 +122,8 @@ export const setTags = function (sequence : Int, tags : string[]) {
 	console.log(TAG, "setTags", sequence, tags)
 	// 将string[]转换为Set<string>以适配Android SDK
 	const tagSet = new Set<string>()
-	for (let tag of tags) {
-		tagSet.add(tag)
+	for (let i = 0; i < tags.length; i++) {
+		tagSet.add(tags[i])
 	}
 	JPushInterface.setTags(UTSAndroid.getAppContext(), sequence, tagSet)
 }
@@ -129,8 +132,8 @@ export const addTags = function (sequence : Int, tags : string[]) {
 	console.log(TAG, "addTags", sequence, tags)
 	// 将string[]转换为Set<string>以适配Android SDK
 	const tagSet = new Set<string>()
-	for (let tag of tags) {
-		tagSet.add(tag)
+	for (let i = 0; i < tags.length; i++) {
+		tagSet.add(tags[i])
 	}
 	JPushInterface.addTags(UTSAndroid.getAppContext(), sequence, tagSet)
 }
@@ -139,8 +142,8 @@ export const deleteTags = function (sequence : Int, tags : string[]) {
 	console.log(TAG, "deleteTags", sequence, tags)
 	// 将string[]转换为Set<string>以适配Android SDK
 	const tagSet = new Set<string>()
-	for (let tag of tags) {
-		tagSet.add(tag)
+	for (let i = 0; i < tags.length; i++) {
+		tagSet.add(tags[i])
 	}
 	JPushInterface.deleteTags(UTSAndroid.getAppContext(), sequence, tagSet)
 }
