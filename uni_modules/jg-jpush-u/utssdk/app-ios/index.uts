@@ -120,6 +120,12 @@ export class JGPushIOSPlugin implements UTSiOSHookProxy {
 		log("JGPushIOSPlugin applicationDidFinishLaunchingWithOptions")
 		// 保存启动选项供后续使用
 		JGPushTool.launchOptions = launchOptions
+		
+		// 注册方法在DidFinishLaunching方法写一遍，否则点击通知冷启动app不会走系统的通知点击回调反复。
+		const entity = JPUSHRegisterEntity()
+		entity.types = 0
+		JPUSHService.register(forRemoteNotificationConfig = entity, delegate = JGPushTool)
+		
 		return true
 	}
 
