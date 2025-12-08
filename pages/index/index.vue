@@ -10,6 +10,9 @@
 		<button type="primary" @click="onSetAlias">setAlias</button>
 		<button type="primary" @click="onDeleteAlias">deleteAlias</button>
 		<button type="primary" @click="onGetAlias">getAlias</button>
+		<button type="primary" @click="onSetBadgeNumber">setBadgeNumber(5)</button>
+		<button type="primary" @click="onResetBadge">resetBadge</button>
+		<button type="primary" @click="onGetBadgeNumber">getBadgeNumber</button>
 	</view>
 </template>
 
@@ -52,7 +55,10 @@
 		addTags,
 		setAlias,
 		deleteAlias,
-		getAlias
+		getAlias,
+		setBadgeNumber,
+		resetBadge,
+		getBadgeNumber
 	} from "@/uni_modules/jg-jpush-u"
 
 	// #ifdef APP-PLUS
@@ -125,6 +131,28 @@
 	}
 	let onGetAlias = () => {
 		getAlias(5)
+	}
+	
+	let onSetBadgeNumber = () => {
+		setBadgeNumber(5)
+		msg.value += "setBadgeNumber(5)\n"
+		console.log("JPUSH-", 'setBadgeNumber(5)')
+	}
+	
+	let onResetBadge = () => {
+		resetBadge()
+		msg.value += "resetBadge\n"
+		console.log("JPUSH-", 'resetBadge')
+	}
+	
+	let onGetBadgeNumber = () => {
+		if(uni.getSystemInfoSync().platform !== "ios"){
+			console.log("JPUSH- do not support")
+		}else {
+			let badge = getBadgeNumber()
+			msg.value += "getBadgeNumber: " + badge + "\n"
+			console.log("JPUSH-", 'getBadgeNumber: ' + badge)
+		}
 	}
 </script>
 

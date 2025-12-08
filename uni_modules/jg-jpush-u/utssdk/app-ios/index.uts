@@ -6,11 +6,12 @@ import { NSNotification } from 'CoreFoundation';
 import { Dictionary, Set, Error } from 'Swift';
 import { NSError } from 'Foundation';
 import { NSSet } from 'Foundation';
-import { UIDevice } from 'UIKit';
+import { UIDevice, UIApplication } from 'UIKit';
 import { ATTrackingManager, ATTrackingManagerAuthorizationStatus } from 'AppTrackingTransparency';
 import { ASIdentifierManager } from 'AdSupport';
 import { NotificationCenter } from 'Foundation';
 import { Selector, NSString } from 'Foundation';
+import { UNUserNotificationCenter } from 'UserNotifications';
 
 /* 引入 interface.uts 文件中定义的变量 */
 import { EventCallBackParams, EventCallBack } from '../interface.uts';
@@ -560,7 +561,20 @@ export function setMobileNumber(sequence : number, mobileNumber : string) : void
  */
 export function setBadgeNumber(curNum : Int) : void {
 	log("setBadgeNumber", curNum)
+	// 调用极光推送接口设置角标
 	JPUSHService.setBadge(curNum)
+	// 同时调用系统接口设置角标
+	if (UTSiOS.available("iOS 16.0, *")) {
+		// iOS 16 及以上使用 UNUserNotificationCenter
+		UNUserNotificationCenter.current().setBadgeCount(Int(curNum), withCompletionHandler = (error : NSError | null) => {
+			if (error != null) {
+				log("setBadgeCount error:", error)
+			}
+		})
+	} else {
+		// iOS 16 以下使用 UIApplication
+		UIApplication.shared.applicationIconBadgeNumber = Int(curNum)
+	}
 }
 
 /**
@@ -569,4 +583,26 @@ export function setBadgeNumber(curNum : Int) : void {
 export function resetBadge() : void {
 	log("resetBadge")
 	JPUSHService.resetBadge()
+	// 同时调用系统接口重置角标
+	if (UTSiOS.available("iOS 16.0, *")) {
+		// iOS 16 及以上使用 UNUserNotificationCenter
+		UNUserNotificationCenter.current().setBadgeCount(0, withCompletionHandler = (error : NSError | null) => {
+			if (error != null) {
+				log("resetBadge setBadgeCount error:", error)
+			}
+		})
+	} else {
+		// iOS 16 以下使用 UIApplication
+		UIApplication.shared.applicationIconBadgeNumber = 0
+	}
 }
+
+/**
+ * 获取应用角标数量
+ */
+export function getBadgeNumber() : number {
+	const badgeNumber = UIApplication.shared.applicationIconBadgeNumber
+	log("getBadgeNumber", badgeNumber)
+	return Number(badgeNumber)
+}
+

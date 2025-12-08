@@ -226,6 +226,10 @@ setMobileNumber(10, "13800138000")
 #### setBadgeNumber(curNum: Int)
 设置应用角标数量
 
+同时调用极光SDK和系统接口设置角标：
+- iOS 16+：使用 `UNUserNotificationCenter.setBadgeCount()`
+- iOS 16以下：使用 `UIApplication.shared.applicationIconBadgeNumber`
+
 **参数：**
 - `curNum`: Int - 角标数量
 
@@ -237,9 +241,25 @@ setBadgeNumber(5)  // 设置角标为5
 #### resetBadge()
 重置角标数量为0
 
+同时调用极光SDK和系统接口重置角标：
+- iOS 16+：使用 `UNUserNotificationCenter.setBadgeCount(0)`
+- iOS 16以下：使用 `UIApplication.shared.applicationIconBadgeNumber = 0`
+
 **示例：**
 ```typescript
 resetBadge()  // 清除角标
+```
+
+#### getBadgeNumber(): number
+获取当前应用角标数量
+
+**返回值：**
+- `number`: 当前角标数量
+
+**示例：**
+```typescript
+const badge = getBadgeNumber()
+console.log('当前角标数量:', badge)
 ```
 
 ## 事件回调
