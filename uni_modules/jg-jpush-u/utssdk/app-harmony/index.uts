@@ -23,29 +23,55 @@ import {
 
 const TAG = "JPUSH-uni-"
 let APP_KEY : string | undefined = undefined
-let MY_WANT : Want | undefined = undefined
+let MY_WANT_ARRAY : Want[] = []
+let IS_INIT : boolean = false
 
 // 获取应用上下文
 function getContext() : common.ApplicationContext {
 	return UTSHarmony.getUIAbilityContext().getApplicationContext()
 }
 
+// 统一处理 setClickWant 的方法
+function handleSetClickWant(want : Want) : void {
+	// 如果已经初始化，直接调用setClickWant
+	if (IS_INIT && undefined !== APP_KEY) {
+		console.log(TAG, "handleSetClickWant: calling setClickWant")
+		JPushInterface.setClickWant(want);
+	} else {
+		// 如果还没有初始化，保存到数组
+		MY_WANT_ARRAY.push(want)
+		console.log(TAG, "handleSetClickWant: saved want to array, size:" + MY_WANT_ARRAY.length)
+	}
+}
+
+// 处理所有保存的 want
+function processSavedWants() : void {
+	if (MY_WANT_ARRAY.length > 0) {
+		console.log(TAG, "processSavedWants: processing " + MY_WANT_ARRAY.length + " saved wants")
+		MY_WANT_ARRAY.forEach((want) => {
+			console.log(TAG, "processSavedWants: calling setClickWant")
+			JPushInterface.setClickWant(want);
+		})
+		MY_WANT_ARRAY = []
+	}
+}
+
 UTSHarmony.onAppAbilityCreate((want : Want, launchParam : AbilityConstant.LaunchParam) => {
 	console.log(TAG, "onAppAbilityCreate")
-	if (undefined === APP_KEY) {
-		MY_WANT = want
-	} 
-	JPushInterface.setClickWant(want);
+	console.log(TAG, "onAppAbilityCreate APP_KEY:"+JSON.stringify(APP_KEY))
+	console.log(TAG, "onAppAbilityCreate IS_INIT:"+IS_INIT)
 	
+	// 使用统一方法处理
+	handleSetClickWant(want)
 })
 
 UTSHarmony.onAppAbilityNewWant((want : Want, launchParam : AbilityConstant.LaunchParam) => {
 	console.log(TAG, "onAppAbilityNewWant")
-	if (undefined === APP_KEY) {
-		MY_WANT = want
-	}
-	JPushInterface.setClickWant(want);
+	console.log(TAG, "onAppAbilityNewWant APP_KEY:"+JSON.stringify(APP_KEY))
+	console.log(TAG, "onAppAbilityNewWant IS_INIT:"+IS_INIT)
 	
+	// 使用统一方法处理
+	handleSetClickWant(want)
 })
 
 
@@ -71,9 +97,10 @@ export const setAppKey = function (appKey : string) {
 	console.log(TAG, "setAppKey")
 	JPushInterface.setAppKey(appKey)
 	APP_KEY = appKey
-	if (undefined !== MY_WANT) {
-		JPushInterface.setClickWant(MY_WANT);
-		MY_WANT = undefined
+	
+	// 如果已经初始化，处理所有保存的want
+	if (IS_INIT) {
+		processSavedWants()
 	}
 }
 export const setChannel = function (channel : string) {
@@ -106,6 +133,12 @@ export const init = function (context : common.UIAbilityContext | common.Ability
 	}
 	console.log(TAG, "init")
 	JPushInterface.init(context)
+	IS_INIT = true
+	
+	// 如果已经设置了APP_KEY，处理所有保存的want
+	if (undefined !== APP_KEY) {
+		processSavedWants()
+	}
 }
 
 export const getRegistrationId = function () : string {
