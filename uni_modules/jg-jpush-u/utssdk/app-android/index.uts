@@ -60,6 +60,7 @@ class EventCallbackManager {
 export const eventCallbackManager = new EventCallbackManager()
 
 export const init = function (appKey? : string) {
+	JPushInterface.setNotificationCallBackEnable(UTSAndroid.getAppContext(),true)
 	if (appKey !== null) {
 		console.log(TAG, "init with appKey", appKey)
 		// 创建JPushConfig并设置appKey
