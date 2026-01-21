@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:vivo:5.9.0"
+		"cn.jiguang.sdk.plugin:vivo:6.0.0"
 
 	],
 	"minSdkVersion": "21",

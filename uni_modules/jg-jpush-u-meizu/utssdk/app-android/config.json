@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:meizu:5.9.0"
+		"cn.jiguang.sdk.plugin:meizu:6.0.0"
 
 	],
 	"minSdkVersion": "21",

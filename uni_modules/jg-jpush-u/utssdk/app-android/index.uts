@@ -93,6 +93,12 @@ export const isPushStopped = function () : boolean {
 	return JPushInterface.isPushStopped(UTSAndroid.getAppContext())
 }
 
+export const getPushStatus = function () {
+	console.log(TAG, "getPushStatus")
+	return JPushInterface.getPushStatus(UTSAndroid.getAppContext())
+}
+
+
 export const setChannel = function (channel : string) {
 	console.log(TAG, "setChannel", channel)
 	JPushInterface.setChannel(UTSAndroid.getAppContext(), channel)

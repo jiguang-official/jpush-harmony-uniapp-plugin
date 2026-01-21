@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:honor:5.9.0"
+		"cn.jiguang.sdk.plugin:honor:6.0.0"
 
 	],
 	"minSdkVersion": "21",
