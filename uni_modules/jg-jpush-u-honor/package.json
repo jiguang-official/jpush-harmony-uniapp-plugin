@@ -1,102 +1,102 @@
 {
-	"id": "jg-jpush-u-honor",
-	"displayName": "jg-jpush-u-honor",
-	"version": "1.1.3",
-	"description": "jg-jpush-u-honor",
-	"keywords": [
-        "jg-jpush-u-honor"
-    ],
-	"repository": "",
-	"engines": {
-		"HBuilderX": "^3.6.8",
-		"uni-app": "^4.75",
-		"uni-app-x": "^4.75"
-	},
-	"dcloudext": {
-		"type": "uts",
-		"sale": {
-			"regular": {
-				"price": "0.00"
-			},
-			"sourcecode": {
-				"price": "0.00"
-			}
-		},
-		"contact": {
-			"qq": ""
-		},
-		"declaration": {
-			"ads": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件",
-			"data": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件",
-			"permissions": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件"
-		},
-		"npmurl": "",
-		"darkmode": "x",
-		"i18n": "x",
-		"widescreen": "x"
-	},
-	"uni_modules": {
-		"dependencies": [],
-		"encrypt": [],
-		"platforms": {
-			"cloud": {
-				"tcb": "y",
-				"aliyun": "y",
-				"alipay": "y"
-			},
-			"client": {
-				"uni-app": {
-					"vue": {
-						"vue2": "-",
-						"vue3": "-"
-					},
-					"web": {
-						"safari": "-",
-						"chrome": "-"
-					},
-					"app": {
-						"vue": "-",
-						"nvue": "-",
-						"android": "√",
-						"ios": "x",
-						"harmony": "x"
-					},
-					"mp": {
-						"weixin": "-",
-						"alipay": "-",
-						"toutiao": "-",
-						"baidu": "-",
-						"kuaishou": "-",
-						"jd": "-",
-						"harmony": "-",
-						"qq": "-",
-						"lark": "-"
-					},
-					"quickapp": {
-						"huawei": "-",
-						"union": "-"
-					}
-				},
-				"uni-app-x": {
-					"web": {
-						"safari": "-",
-						"chrome": "-"
-					},
-					"app": {
-						"android": "-",
-						"ios": "-",
-						"harmony": "-"
-					},
-					"mp": {
-						"weixin": "-"
-					}
-                },
-                "App": {
-                    "app-android": "u",
-                    "app-harmony": "u",
-                    "app-ios": "u"
-                }
-			}
-		}
-	}
+  "id": "jg-jpush-u-honor",
+  "displayName": "jg-jpush-u-honor",
+  "version": "1.2.0",
+  "description": "jg-jpush-u-honor",
+  "keywords": [
+    "jg-jpush-u-honor"
+],
+  "repository": "",
+  "engines": {
+    "HBuilderX": "^3.6.8",
+    "uni-app": "^4.75",
+    "uni-app-x": "^4.75"
+  },
+  "dcloudext": {
+    "type": "uts",
+    "sale": {
+      "regular": {
+        "price": "0.00"
+      },
+      "sourcecode": {
+        "price": "0.00"
+      }
+    },
+    "contact": {
+      "qq": ""
+    },
+    "declaration": {
+      "ads": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件",
+      "data": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件",
+      "permissions": "jg-jpush-u插件 中android 厂商部分 请查看jg-jpush-u插件"
+    },
+    "npmurl": "",
+    "darkmode": "x",
+    "i18n": "x",
+    "widescreen": "x"
+  },
+  "uni_modules": {
+    "dependencies": [],
+    "encrypt": [],
+    "platforms": {
+      "cloud": {
+        "tcb": "√",
+        "aliyun": "√",
+        "alipay": "√"
+      },
+      "client": {
+        "uni-app": {
+          "vue": {
+            "vue2": "-",
+            "vue3": "-"
+          },
+          "web": {
+            "safari": "-",
+            "chrome": "-"
+          },
+          "app": {
+            "vue": "-",
+            "nvue": "-",
+            "android": "√",
+            "ios": "x",
+            "harmony": "x"
+          },
+          "mp": {
+            "weixin": "-",
+            "alipay": "-",
+            "toutiao": "-",
+            "baidu": "-",
+            "kuaishou": "-",
+            "jd": "-",
+            "harmony": "-",
+            "qq": "-",
+            "lark": "-"
+          },
+          "quickapp": {
+            "huawei": "-",
+            "union": "-"
+          }
+        },
+        "uni-app-x": {
+          "web": {
+            "safari": "-",
+            "chrome": "-"
+          },
+          "app": {
+            "android": "-",
+            "ios": "-",
+            "harmony": "-"
+          },
+          "mp": {
+            "weixin": "-"
+          }
+        },
+        "App": {
+          "app-android": "u",
+          "app-harmony": "u",
+          "app-ios": "u"
+        }
+      }
+    }
+  }
 }
