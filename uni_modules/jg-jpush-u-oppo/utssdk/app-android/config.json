@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:oppo:6.0.0",
+		"cn.jiguang.sdk.plugin:oppo:6.0.1",
 		"com.google.code.gson:gson:2.10.1",
 		"androidx.annotation:annotation:1.1.0"
 

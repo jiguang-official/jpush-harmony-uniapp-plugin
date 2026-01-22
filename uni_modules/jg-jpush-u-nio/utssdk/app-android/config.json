@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:nio:6.0.0"
+		"cn.jiguang.sdk.plugin:nio:6.0.1"
 
 	],
 	"minSdkVersion": "21",

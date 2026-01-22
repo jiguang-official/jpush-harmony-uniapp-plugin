@@ -1,6 +1,6 @@
 {
 	"dependencies": [
-		"cn.jiguang.sdk.plugin:xiaomi:6.0.0"
+		"cn.jiguang.sdk.plugin:xiaomi:6.0.1"
 
 	],
 	"minSdkVersion": "21",
