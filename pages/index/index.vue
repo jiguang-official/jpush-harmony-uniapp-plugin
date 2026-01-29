@@ -13,6 +13,7 @@
 		<button type="primary" @click="onSetBadgeNumber">setBadgeNumber(5)</button>
 		<button type="primary" @click="onResetBadge">resetBadge</button>
 		<button type="primary" @click="onGetBadgeNumber">getBadgeNumber</button>
+		<button type="primary" @click="onGetPushStatus">getPushStatus</button>
 	</view>
 </template>
 
@@ -58,7 +59,8 @@
 		getAlias,
 		setBadgeNumber,
 		resetBadge,
-		getBadgeNumber
+		getBadgeNumber,
+		getPushStatus
 	} from "@/uni_modules/jg-jpush-u"
 
 	// #ifdef APP-PLUS
@@ -152,6 +154,15 @@
 			let badge = getBadgeNumber()
 			msg.value += "getBadgeNumber: " + badge + "\n"
 			console.log("JPUSH-", 'getBadgeNumber: ' + badge)
+		}
+	}
+
+	let onGetPushStatus = () => {
+		if (uni.getSystemInfoSync().platform === "ios") {
+			getPushStatus((code, isStopped) => {
+				msg.value += "getPushStatus: code=" + code + " isStopped=" + isStopped + "\n"
+				console.log("JPUSH-", 'getPushStatus:', code, isStopped)
+			})
 		}
 	}
 </script>

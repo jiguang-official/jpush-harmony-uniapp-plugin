@@ -552,6 +552,34 @@ let isPushStopped = isPushStopped()
 
 - 反回值：true停止，false正常，undefined没有初始化等异常情况
 
+## 推送状态查询（getPushStatus）
+
+### 功能说明
+
+> * 请先[init](#init)，否则调用无效
+> * iOS 6.0.0+ 通过回调返回
+
+### 接口定义
+
+- **Android**：`getPushStatus(): 返回值（具体类型见原生文档）`
+- **iOS**：`getPushStatus(callback: (code: number, isStopped: boolean) => void): void`  
+  - code 为 0 表示成功，isStopped 为 true 表示推送已停止
+  - code 为 0 时， 表示成功，isStopped的值才有效
+
+### 代码示例
+
+```ts
+
+// iOS
+getPushStatus((code, isStopped) => {
+  console.log('code:', code, 'isStopped:', isStopped)
+})
+```
+
+### 参数说明
+
+- iOS callback：code 结果码（0 表示成功），isStopped 是否已停止推送
+
 ## 标签与别名-api
 
 ### 新增标签（addTags）

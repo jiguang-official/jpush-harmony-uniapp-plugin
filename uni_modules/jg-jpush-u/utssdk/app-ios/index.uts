@@ -342,6 +342,18 @@ export function setBackgroundEnable(isEnable : boolean) : void {
 }
 
 /**
+ * 获取推送是否被停止的状态（iOS 6.0.0+）
+ * @param callback (code, isStopped) code 为 0 表示成功，isStopped 为 true 表示推送已停止。code 为0 时，isStopped的值才有效。
+ */
+export function getPushStatus(callback : (code : number, isStopped : boolean) => void) : void {
+	log("getPushStatus")
+	const completion = (iResCode : Int, isStopped : Boolean) => {
+		callback(iResCode as number, isStopped as boolean)
+	}
+	JPUSHService.getPushStatus(completion)
+}
+
+/**
  * 获取RegistrationID
  */
 export function getRegistrationId() : string {
