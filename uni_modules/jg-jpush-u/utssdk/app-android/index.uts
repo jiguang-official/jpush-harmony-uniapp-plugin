@@ -1,6 +1,9 @@
 import JPushInterface from 'cn.jpush.android.api.JPushInterface'
 import JCoreInterface from 'cn.jiguang.api.JCoreInterface'
 import JPushConfig from 'cn.jpush.android.data.JPushConfig'
+import JPushCollectControl from 'cn.jpush.android.data.JPushCollectControl'
+import JPushLocalNotification from 'cn.jpush.android.data.JPushLocalNotification'
+import JCollectionAuth from 'cn.jiguang.api.JCollectionAuth'
 import HashSet from 'java.util.HashSet'
 
 export * from './PushMessageReceiver.uts'
@@ -8,7 +11,9 @@ export { PushService } from "./PushService.uts"
 
 
 /* 引入 interface.uts 文件中定义的变量 */
-import { EventCallBackParams, EventCallBack } from '../interface.uts';
+import { EventCallBackParams, EventCallBack, CollectControlOptions, LocalNotificationOptions } from '../interface.uts';
+
+export type { CollectControlOptions, LocalNotificationOptions } from '../interface.uts'
 
 const TAG = "JPUSH-uni-"
 
@@ -99,6 +104,15 @@ export const getPushStatus = function () {
 	return JPushInterface.getPushStatus(UTSAndroid.getAppContext())
 }
 
+/**
+ * 获取当前 Push 长连接状态（仅 Android 支持）
+ * 当连接状态变化时可通过 CONNECTION 广播或 JPushMessageReceiver 获知。
+ * @returns true 已连接，false 未连接
+ */
+export const getConnectionState = function () : boolean {
+	console.log(TAG, "getConnectionState")
+	return JPushInterface.getConnectionState(UTSAndroid.getAppContext())
+}
 
 export const setChannel = function (channel : string) {
 	console.log(TAG, "setChannel", channel)
@@ -137,9 +151,59 @@ export const setPushTime = function (weekDays : number[] | null, startHour : num
 	JPushInterface.setPushTime(context, daysSet, startHour, endHour)
 }
 
+/**
+ * 设置通知静默时间（仅 Android 支持）
+ * 在静默时段内收到的通知不会有铃声和震动。
+ * @param startHour 静默开始-小时（24 小时制，0-23）
+ * @param startMinute 静默开始-分钟（0-59）
+ * @param endHour 静默结束-小时（24 小时制，0-23）
+ * @param endMinute 静默结束-分钟（0-59）
+ */
+export const setSilenceTime = function (startHour : number, startMinute : number, endHour : number, endMinute : number) {
+	console.log(TAG, "setSilenceTime", startHour, startMinute, endHour, endMinute)
+	JPushInterface.setSilenceTime(UTSAndroid.getAppContext(), startHour, startMinute, endHour, endMinute)
+}
+
 export const clearNotificationAll = function () {
 	console.log(TAG, "clearNotificationAll")
 	JPushInterface.clearAllNotifications(UTSAndroid.getAppContext())
+}
+
+/**
+ * 添加本地通知（仅 Android 支持完整能力；需在 init 之后调用）。
+ * notificationId 建议为正整数，为 0 或负数将导致无法清除。
+ * @param options 本地通知参数
+ */
+export const addLocalNotification = function (options : LocalNotificationOptions) {
+	console.log(TAG, "addLocalNotification", options)
+	const ln = new JPushLocalNotification()
+	ln.setNotificationId(options.notificationId)
+	ln.setBroadcastTime(options.broadcastTime)
+	if (options.title != null) ln.setTitle(options.title)
+	if (options.content != null) ln.setContent(options.content)
+	if (options.extras != null) ln.setExtras(options.extras)
+	if (options.builderId != null) ln.setBuilderId(options.builderId)
+	if (options.category != null) ln.setCategory(options.category)
+	if (options.priority != null) ln.setPriority(options.priority)
+	if (options.channelId != null) ln.setChannelId(options.channelId)
+	JPushInterface.addLocalNotification(UTSAndroid.getAppContext(), ln)
+}
+
+/**
+ * 移除指定 ID 的本地通知（仅 Android 支持；notificationId 为 0 或负数的通知无法移除）
+ * @param notificationId 本地通知 ID
+ */
+export const removeLocalNotification = function (notificationId : number) {
+	console.log(TAG, "removeLocalNotification", notificationId)
+	JPushInterface.removeLocalNotification(UTSAndroid.getAppContext(), notificationId)
+}
+
+/**
+ * 清除所有本地通知（仅 Android 支持）
+ */
+export const clearLocalNotifications = function () {
+	console.log(TAG, "clearLocalNotifications")
+	JPushInterface.clearLocalNotifications(UTSAndroid.getAppContext())
 }
 
 export const clearNotificationById = function (notificationId : Int) {
@@ -192,6 +256,29 @@ export const checkTagBindState = function (sequence : Int, tag : string) {
 	JPushInterface.checkTagBindState(UTSAndroid.getAppContext(), sequence, tag)
 }
 
+/**
+ * 筛选有效标签。调用官方 JPushInterface.filterValidTags，用于在 setTags/addTags 前过滤无效 tag。
+ * @param tags 待校验的标签数组
+ * @returns 有效标签数组（超出数量/总长限制时返回靠前的有效 tag）
+ */
+export const filterValidTags = function (tags : string[]) : string[] {
+	if (tags == null || tags.length == 0) return []
+	const tagSet = new Set<string>()
+	for (let i = 0; i < tags.length; i++) {
+		if (tags[i] != null && typeof tags[i] === 'string') {
+			tagSet.add(tags[i])
+		}
+	}
+	const validSet = JPushInterface.filterValidTags(UTSAndroid.getAppContext(), tagSet)
+	if (validSet == null) return []
+	const result : string[] = []
+	const iter = validSet.iterator()
+	while (iter.hasNext()) {
+		result.push(iter.next())
+	}
+	return result
+}
+
 export const setAlias = function (sequence : Int, alias : string) {
 	console.log(TAG, "setAlias", sequence, alias)
 	JPushInterface.setAlias(UTSAndroid.getAppContext(), sequence, alias)
@@ -237,9 +324,33 @@ export const onKillProcess = function () {
 	JPushInterface.onKillProcess(UTSAndroid.getAppContext())
 }
 
+/**
+ * 请求通知权限（仅 Android）。官方 API 需要 Activity，建议在 Activity 可见时调用。
+ * 若无当前 Activity 则仅打日志不调用 SDK。
+ */
 export const requestPermission = function () {
 	console.log(TAG, "requestPermission")
-	JPushInterface.requestPermission(UTSAndroid.getAppContext())
+	const activity = UTSAndroid.getUniActivity()
+	if (activity != null) {
+		JPushInterface.requestPermission(activity)
+	} else {
+		console.log(TAG, "requestPermission: no Activity, skip (call when Activity available)")
+	}
+}
+
+/**
+ * 申请必须权限（仅 Android，如 POST_NOTIFICATIONS，Android 13+）
+ * 建议在 Activity 可见时调用（如首屏 onReady），以便正确弹出系统权限框。
+ */
+export const requestRequiredPermission = function () {
+	console.log(TAG, "requestRequiredPermission")
+	// 官方 API 需要 Activity，优先使用当前 Activity
+	const activity = UTSAndroid.getUniActivity()
+	if (activity != null) {
+		JPushInterface.requestRequiredPermission(activity)
+	} else {
+		console.log(TAG, "requestRequiredPermission: no Activity, skip (call when Activity available)")
+	}
 }
 
 export const isNotificationEnabled = function () : number {
@@ -250,6 +361,24 @@ export const isNotificationEnabled = function () : number {
 export const goToAppNotificationSettings = function () {
 	console.log(TAG, "goToAppNotificationSettings")
 	JPushInterface.goToAppNotificationSettings(UTSAndroid.getAppContext())
+}
+
+/**
+ * 主动触发通知状态检查，若有变化则上报（仅 Android 支持，JPush Android SDK v5.9.0+）
+ */
+export const triggerNotificationStateCheck = function () {
+	console.log(TAG, "triggerNotificationStateCheck")
+	JPushInterface.triggerNotificationStateCheck(UTSAndroid.getAppContext())
+}
+
+/**
+ * 上报通知打开事件，用于统计用户点击通知栏或自定义消息展示（msgId 来源于推送 Extra 的 EXTRA_MSG_ID）
+ * @param msgId 推送消息唯一 ID
+ * @param channel 仅鸿蒙使用（0=厂商通道，1=极光通道），Android 忽略
+ */
+export const reportNotificationOpened = function (msgId : string, _channel? : number) {
+	console.log(TAG, "reportNotificationOpened", msgId)
+	JPushInterface.reportNotificationOpened(UTSAndroid.getAppContext(), msgId)
 }
 
 export const setBadgeNumber = function (curNum : Int) {
@@ -267,10 +396,107 @@ export const setGeofenceEnable = function (isEnable : boolean) {
 	JPushInterface.setGeofenceEnable(UTSAndroid.getAppContext(), isEnable)
 }
 
+/**
+ * 设置地理围栏监控周期（仅 Android 支持，JPush Android SDK v3.1.8+）
+ * @param intervalMs 监控周期，单位毫秒，最小 3 分钟、最大 1 天；默认 15 分钟
+ */
+export const setGeofenceInterval = function (intervalMs : number) {
+	console.log(TAG, "setGeofenceInterval", intervalMs)
+	JPushInterface.setGeofenceInterval(UTSAndroid.getAppContext(), intervalMs)
+}
+
+/**
+ * 设置允许保存的最大地理围栏个数（仅 Android 支持，JPush Android SDK v3.1.8+）
+ * @param maxNumber 最多允许保存的围栏个数，范围 1-100；默认 10
+ */
+export const setMaxGeofenceNumber = function (maxNumber : number) {
+	console.log(TAG, "setMaxGeofenceNumber", maxNumber)
+	JPushInterface.setMaxGeofenceNumber(UTSAndroid.getAppContext(), maxNumber)
+}
+
+/**
+ * 删除指定 id 的地理围栏（仅 Android 支持，JPush Android SDK v3.1.8+）
+ * @param geofenceId 地理围栏 id
+ */
+export const deleteGeofence = function (geofenceId : string) {
+	console.log(TAG, "deleteGeofence", geofenceId)
+	JPushInterface.deleteGeofence(UTSAndroid.getAppContext(), geofenceId)
+}
+
 export const setDataInsightsEnable = function (isEnable : boolean) {
 	console.log(TAG, "setDataInsightsEnable", isEnable)
 	JPushInterface.setDataInsightsEnable(UTSAndroid.getAppContext(), isEnable)
 }
+
+/**
+ * 设置数据采集控制（Android 支持 imei/imsi/mac/ssid/bssid/cell/wifi；iOS 支持 ssid/bssid/cell/gps）
+ * @param options 各采集项开关，默认 true 表示采集，false 表示不采集
+ */
+export const setCollectControl = function (options : CollectControlOptions | null) {
+	console.log(TAG, "setCollectControl", options)
+	const context = UTSAndroid.getAppContext()
+	const builder = new JPushCollectControl.Builder()
+	if (options != null) {
+		if (options.imei === false) builder.imei(false)
+		if (options.imsi === false) builder.imsi(false)
+		if (options.mac === false) builder.mac(false)
+		if (options.ssid === false) builder.ssid(false)
+		if (options.bssid === false) builder.bssid(false)
+		if (options.cell === false) builder.cell(false)
+		if (options.wifi === false) builder.wifi(false)
+	}
+	JPushInterface.setCollectControl(context, builder.build())
+}
+
+/**
+ * 设置链路调节器开关（仅 Android 支持）
+ */
+export const setLinkMergeEnable = function (isEnable : boolean) {
+	console.log(TAG, "setLinkMergeEnable", isEnable)
+	JPushInterface.setLinkMergeEnable(UTSAndroid.getAppContext(), isEnable)
+}
+
+/**
+ * 设置应用自启动开关（仅 Android 支持）
+ */
+export const setEnableAutoWakeup = function (isEnable : boolean) {
+	console.log(TAG, "setEnableAutoWakeup", isEnable)
+	JCollectionAuth.enableAutoWakeup(UTSAndroid.getAppContext(), isEnable)
+}
+
+/**
+ * 设置应用活跃时长统计开关（仅 Android 支持；鸿蒙同接口 setEnableAppTerminate）
+ */
+export const setEnableAppTerminate = function (isEnable : boolean) {
+	console.log(TAG, "setEnableAppTerminate", isEnable)
+	JCollectionAuth.enableAppTerminate(UTSAndroid.getAppContext(), isEnable)
+}
+
+/**
+ * 设置是否开启省电模式（仅 Android 支持）
+ */
+export const setPowerSaveMode = function (enable : boolean) {
+	console.log(TAG, "setPowerSaveMode", enable)
+	JPushInterface.setPowerSaveMode(UTSAndroid.getAppContext(), enable)
+}
+
+
+/**
+ * 关闭 CrashLog 收集并上报（仅 Android 支持）
+ */
+export const stopCrashHandler = function () {
+	console.log(TAG, "stopCrashHandler")
+	JPushInterface.stopCrashHandler(UTSAndroid.getAppContext())
+}
+
+/**
+ * 开启 CrashLog 收集并上报（仅 Android 支持）
+ */
+export const initCrashHandler = function () {
+	console.log(TAG, "initCrashHandler")
+	JPushInterface.initCrashHandler(UTSAndroid.getAppContext())
+}
+
 
 export const testCountryCode = function (code:string) {
 	JCoreInterface.testCountryCode(UTSAndroid.getAppContext(), code)

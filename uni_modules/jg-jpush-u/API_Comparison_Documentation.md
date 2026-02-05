@@ -40,6 +40,7 @@
 | 停止推送 | - | `stopPush()` | `stopPush()` | iOS不支持 |
 | 恢复推送 | - | `resumePush()` | `resumePush()` | iOS不支持 |
 | 检查推送状态 | - | `isPushStopped(): boolean` | `isPushStopped(): boolean \| undefined` | iOS不支持 |
+| 获取推送连接状态 | - | `getConnectionState(): boolean` | `getConnectionState(): boolean \| undefined` | 仅 Android 支持 |
 
 ### 4. 标签管理
 
@@ -52,6 +53,7 @@
 | 获取所有标签 | `getAllTags(sequence: Int)` | `getAllTags(sequence: Int)` | - | HarmonyOS不支持一次性获取所有标签 |
 | 分页获取标签 | - | - | `getTags(sequence: number, curr: number)` | 仅HarmonyOS支持，需要页码参数 |
 | 验证标签绑定状态 | `checkTagBindState(sequence: Int, tag: string)` | `checkTagBindState(sequence: Int, tag: string)` | `checkTagBindState(sequence: number, tag: string)` | 功能相同，HarmonyOS使用number类型 |
+| 筛选有效标签 | `filterValidTags(tags: string[]): string[]` | `filterValidTags(tags: string[]): string[]` | `filterValidTags(tags: string[]): string[]` | Android/iOS 支持 |
 
 ### 5. 别名管理
 
@@ -78,6 +80,8 @@
 
 | 功能 | iOS | Android | HarmonyOS | 说明 |
 |------|-----|---------|-----------|------|
+| 设置允许推送时间 | - | `setPushTime(weekDays, startHour, endHour)` | - | 仅Android支持 |
+| 设置通知静默时间 | - | `setSilenceTime(startHour, startMinute, endHour, endMinute)` | - | 仅Android支持 |
 | 设置最新通知数量 | - | `setLatestNotificationNumber(maxNum: Int)` | - | 仅Android支持 |
 | 清除所有通知 | - | `clearNotificationAll()` | `clearNotificationAll()` | iOS不支持 |
 | 根据ID清除通知 | - | `clearNotificationById(notificationId: Int)` | `clearNotificationById(id: number)` | iOS不支持 |
@@ -100,6 +104,8 @@
 | 请求通知权限 | - | `requestPermission()` | - | 仅Android支持 |
 | 检查通知权限状态 | - | `isNotificationEnabled(): number` | - | 仅Android支持 |
 | 跳转到通知设置 | - | `goToAppNotificationSettings()` | - | 仅Android支持 |
+| 触发通知状态检查 | - | `triggerNotificationStateCheck()` | - | 仅Android支持 |
+| 上报通知打开事件 | - | `reportNotificationOpened(msgId: string, channel?: number)` | 同左，channel 可选（0=厂商 1=极光），不传默认极光通道 | Android/鸿蒙支持 |
 
 ### 11. 智能推送设置
 
@@ -107,6 +113,9 @@
 |------|-----|---------|-----------|------|
 | 设置智能推送开关 | - | `setSmartPushEnable(isEnable: boolean)` | `setSmartPushEnable(enable: boolean)` | iOS不支持 |
 | 设置地理围栏开关 | - | `setGeofenceEnable(isEnable: boolean)` | - | 仅Android支持 |
+| 设置地理围栏监控周期 | `setGeofenceInterval(intervalMs: number)` | `setGeofenceInterval(intervalMs: number)` | 占位 | Android/iOS 已实现 |
+| 设置最大地理围栏个数 | `setMaxGeofenceNumber(maxNumber: number)` | `setMaxGeofenceNumber(maxNumber: number)` | 占位 | Android 1-100，iOS 最大 20 |
+| 删除地理围栏 | `deleteGeofence(geofenceId: string)` | `deleteGeofence(geofenceId: string)` | 占位 | Android/iOS 已实现 |
 | 设置数据洞察开关 | - | `setDataInsightsEnable(isEnable: boolean)` | `setDataInsightsEnable(enable: boolean)` | iOS不支持 |
 
 ### 12. 消息处理（HarmonyOS特有）

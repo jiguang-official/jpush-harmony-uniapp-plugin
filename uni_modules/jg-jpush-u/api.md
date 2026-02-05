@@ -69,7 +69,85 @@ import {
 
 - JG_DEBUG_MODE 为 true 则会打印 debug 级别的日志，false 则只会打印 warning 级别以上的日志
 
+## 申请必须权限 API（requestRequiredPermission）
 
+### 功能说明
+
+- **仅 Android 有效**：申请必须权限（如 Android 13+ 的 `POST_NOTIFICATIONS`），建议在首屏 Activity 可见时调用。
+- iOS/鸿蒙：无直接对应，可做空实现或使用系统/现有权限接口。
+
+### 接口定义
+
+```ts
+requestRequiredPermission()
+```
+
+### 代码示例
+
+```ts
+// 在首屏 onReady 或合适时机调用（Android 13+ 通知权限）
+requestRequiredPermission()
+```
+
+---
+
+## 数据采集控制 API（setCollectControl）
+
+### 功能说明
+
+- 控制 SDK 可选个人信息采集项。Android 支持 imei/imsi/mac/ssid/bssid/cell/wifi；iOS 支持 ssid/bssid/cell/gps；鸿蒙为部分能力（如 setListWifi、setEnableAppTerminate）。
+- 未传或未设置的项保持 SDK 默认（一般为 true/采集）。
+
+### 接口定义
+
+```ts
+// CollectControlOptions 各字段为 boolean，false 表示不采集
+type CollectControlOptions = {
+  imei?: boolean
+  imsi?: boolean
+  mac?: boolean
+  ssid?: boolean
+  bssid?: boolean
+  cell?: boolean
+  wifi?: boolean
+  gps?: boolean   // 仅 iOS
+}
+setCollectControl(options: CollectControlOptions | null)
+```
+
+### 代码示例
+
+```ts
+setCollectControl({ mac: false, wifi: false })
+```
+
+---
+
+## 扩展业务开关 API（仅 Android 有效）
+
+以下接口仅在 Android 端有对应 SDK 能力，iOS/鸿蒙调用为占位（无副作用）。
+
+| 接口 | 说明 |
+|------|------|
+| `setLinkMergeEnable(isEnable: boolean)` | 链路调节器开关 |
+| `setEnableAutoWakeup(isEnable: boolean)` | 应用自启动开关 |
+| `enableAppTerminate(isEnable: boolean)` | 应用活跃时长统计开关（鸿蒙有独立接口，同语义） |
+| `setPowerSaveMode(enable: boolean)` | 省电模式开关 |
+| `stopCrashHandler()` | 关闭 CrashLog 上报 |
+| `initCrashHandler()` | 开启 CrashLog 上报 |
+
+### 接口定义
+
+```ts
+setLinkMergeEnable(isEnable: boolean)
+setEnableAutoWakeup(isEnable: boolean)
+enableAppTerminate(isEnable: boolean)
+setPowerSaveMode(enable: boolean)
+stopCrashHandler()
+initCrashHandler()
+```
+
+---
 
 ## 配置极光 Appkey（setAppKey）
 
@@ -552,6 +630,38 @@ let isPushStopped = isPushStopped()
 
 - 反回值：true停止，false正常，undefined没有初始化等异常情况
 
+## 获取推送连接状态（getConnectionState）
+
+### 功能说明
+
+获取当前 Push 长连接是否已连接。仅 **Android** 支持同步查询；iOS、鸿蒙官方 SDK 无该 API，调用返回 `undefined`。鸿蒙可通过 CallBackMsg 的 `onConnected` 回调获知连接状态，Android 还可通过 CONNECTION 广播获知状态变化。
+
+### 接口定义
+
+```
+    getConnectionState(): boolean | undefined
+```
+
+- **Android**：返回 `boolean`，true 表示已连接，false 表示未连接。
+- **iOS / 鸿蒙**：返回 `undefined`（无官方同步 API）。
+
+### 代码示例
+
+```ts
+const connected = getConnectionState()
+if (connected === true) {
+  console.log('长连接已连接')
+} else if (connected === false) {
+  console.log('长连接未连接')
+} else {
+  console.log('当前平台不支持或未初始化')
+}
+```
+
+### 参数说明
+
+- 无
+
 ## 推送状态查询（getPushStatus）
 
 ### 功能说明
@@ -579,6 +689,70 @@ getPushStatus((code, isStopped) => {
 ### 参数说明
 
 - iOS callback：code 结果码（0 表示成功），isStopped 是否已停止推送
+
+## 设置允许推送时间（setPushTime）
+
+### 功能说明
+
+> * **仅 Android 支持**；iOS、鸿蒙官方 SDK 无此 API，调用无效果（占位实现）。
+> * 默认任何时间都允许推送。调用此 API 后，仅在该星期与时间段内会展示通知，其余时间收到的通知会被丢弃。
+> * 仅对**通知**有效，自定义消息不受影响。
+
+### 接口定义
+
+```ts
+/**
+ * @param weekDays  允许推送的星期：0=周日、1=周一…6=周六；null=任何时间都可收到；[]=任何时间都收不到
+ * @param startHour 允许推送开始时间（24 小时制，0-23）
+ * @param endHour   允许推送结束时间（24 小时制，0-23）
+ */
+setPushTime(weekDays: number[] | null, startHour: number, endHour: number)
+```
+
+### 代码示例
+
+```ts
+// 仅周一到周五、10:00～23:00 允许推送
+setPushTime([1, 2, 3, 4, 5], 10, 23)
+
+// 取消限制，任何时间都可收到
+setPushTime(null, 0, 23)
+```
+
+### 参数说明
+
+- weekDays：星期数组或 null；空数组表示任何时间都收不到。
+- startHour、endHour：0～23。
+
+## 设置通知静默时间（setSilenceTime）
+
+### 功能说明
+
+> * **仅 Android 支持**；iOS、鸿蒙官方 SDK 无此 API，调用无效果（占位实现）。
+> * 在静默时段内收到的通知不会有铃声和震动。
+
+### 接口定义
+
+```ts
+/**
+ * @param startHour   静默开始-小时（0-23）
+ * @param startMinute 静默开始-分钟（0-59）
+ * @param endHour     静默结束-小时（0-23）
+ * @param endMinute   静默结束-分钟（0-59）
+ */
+setSilenceTime(startHour: number, startMinute: number, endHour: number, endMinute: number)
+```
+
+### 代码示例
+
+```ts
+// 22:30 至次日 8:30 为静音时段
+setSilenceTime(22, 30, 8, 30)
+```
+
+### 参数说明
+
+- 均为 24 小时制；分钟 0～59。
 
 ## 标签与别名-api
 
@@ -722,6 +896,41 @@ setTags(this.sequence++, ["xxx", "yyy"])
   - 用户自定义的操作序列号，同操作结果一起返回，用来标识一次操作的唯一性。
 - tags
   - 被查询的 tag
+
+
+### 筛选有效标签（filterValidTags）
+
+#### 功能说明
+
+> * 用于在 setTags/addTags 前过滤掉无效 tag，避免因单个无效 tag 导致整次设置失败。
+> * iOS 使用原生 SDK 的 filterValidTags；Android / 鸿蒙 采用与官方文档一致的本地校验规则（有效字符、40 字节/tag、最多 1000 个、总长 5000 字节）。
+> * 可在任意时机调用，无需 init 或 sequence。
+
+#### 接口定义
+
+```ts
+    /**
+     * 筛选有效标签
+     * @param tags 待校验的标签数组
+     * @returns 有效标签数组（若超出数量/总长限制则保留靠前的有效 tag）
+     */
+    filterValidTags(tags: string[]): string[]
+```
+
+#### 代码示例
+
+```ts
+const input = ["tag1", "无效 tag!", "tag2", "a".repeat(50)]
+const valid = filterValidTags(input)
+setTags(this.sequence++, valid)
+```
+
+#### 参数说明
+
+- tags
+  - 待校验的标签数组。
+- 返回值
+  - 符合极光规则的标签数组（有效字符：字母、数字、下划线、汉字、@!#$&*+=.|；每 tag ≤40 字节；最多 1000 个，总长 ≤5000 字节）。
 
 
 ### 清除所有标签（cleanTags）
@@ -955,6 +1164,90 @@ deleteAlias(this.sequence++)
 - badgeNumber
     - 角标值
 
+## 本地通知 API（addLocalNotification / removeLocalNotification / clearLocalNotifications）
+
+### 功能说明
+
+通过极光 SDK 在应用内添加定时本地通知，不依赖网络。与远程推送相互独立，不受「保留最近通知条数」限制。
+
+- **Android**：已实现，行为与极光 [Android 本地通知 API](https://docs.jiguang.cn/jpush/client/Android/android_api) 一致（JPush Android SDK v1.6.4+）。
+- **iOS**：已实现，使用 JPush 2.1.9+ 的 `addNotification` / `removeNotification`。
+- **鸿蒙**：官方 SDK 无此 API，当前为占位实现，调用无效果。
+
+### 类型 LocalNotificationOptions
+
+- **notificationId**：number，必填；本地通知 ID，建议为正整数（为 0 或负数时 Android 上可能无法清除）。
+- **broadcastTime**：number，必填；触发时间，毫秒时间戳。
+- **title?**：string，通知标题。
+- **content?**：string，通知内容。
+- **extras?**：string，额外数据（JSON 字符串）。
+- **builderId?**：number，通知栏样式编号（Android）。
+- **category?**：string，分类（Android 5.2.0+）。
+- **priority?**：number，优先级，-2～2（Android）。
+- **channelId?**：string，通知渠道 ID（Android 8.0+）。
+
+### addLocalNotification(options: LocalNotificationOptions)
+
+添加一条本地通知，需在 `init` 之后调用。
+
+```
+addLocalNotification(options: LocalNotificationOptions)
+```
+
+### removeLocalNotification(notificationId: number)
+
+移除指定 ID 的本地通知。
+
+```
+removeLocalNotification(notificationId: number)
+```
+
+### clearLocalNotifications()
+
+清除所有本地通知。
+
+```
+clearLocalNotifications()
+```
+
+## 地理围栏相关 API
+
+以下三个 API 用于配置与删除地理围栏（当设备进入/离开地理区域时触发通知或自定义消息）。需先开启地理围栏能力（如 `setGeofenceEnable(true)`）。
+
+- **Android**：已实现，行为与极光 Android 文档一致（JPush Android SDK v3.1.8+）。
+- **iOS**：已实现；监控周期与最大个数与 Android 语义一致，iOS 系统限制最大围栏数为 20。
+- **鸿蒙**：官方 SDK 无此能力，当前为占位实现，调用无效果。
+
+### setGeofenceInterval(intervalMs: number)
+
+设置地理围栏监控周期（单位毫秒；最小 3 分钟、最大 1 天，默认 15 分钟）。
+
+```
+setGeofenceInterval(intervalMs: number)
+```
+
+- **intervalMs**：监控周期，毫秒。示例：`15 * 60 * 1000` 表示 15 分钟。
+
+### setMaxGeofenceNumber(maxNumber: number)
+
+设置允许保存的最大地理围栏个数（Android 范围 1-100，默认 10；iOS 最大 20）。
+
+```
+setMaxGeofenceNumber(maxNumber: number)
+```
+
+- **maxNumber**：最多允许保存的围栏个数。
+
+### deleteGeofence(geofenceId: string)
+
+删除指定 id 的地理围栏。
+
+```
+deleteGeofence(geofenceId: string)
+```
+
+- **geofenceId**：地理围栏 id。
+
 ## 设置允许推送时间（setPushTime）
 
 ### 功能说明
@@ -996,6 +1289,113 @@ deleteAlias(this.sequence++)
     - 允许推送的开始小时，24 小时制，0-23。
 - endHour
     - 允许推送的结束小时，24 小时制，0-23。
+
+## 设置通知静默时间（setSilenceTime）
+
+### 功能说明
+
+默认情况下收到推送通知时会有震动、响铃等提示。调用此 API 可设置静默时段（免打扰）：在该时段内收到的通知**不会有铃声和震动**，仅对通知生效。
+
+- **Android**：已实现，行为与极光 Android 文档一致（JPush Android SDK v1.4.0+）。
+- **iOS**：官方 SDK 无此 API，当前为占位实现，调用无效果。
+- **鸿蒙**：官方 SDK 无此 API，当前为占位实现，调用无效果。
+
+### 接口定义
+
+```
+    /**
+     * 设置通知静默时间（静默时段内无铃声、震动）
+     * @param startHour 静默开始-小时（24 小时制，0-23）
+     * @param startMinute 静默开始-分钟（0-59）
+     * @param endHour 静默结束-小时（24 小时制，0-23）
+     * @param endMinute 静默结束-分钟（0-59）
+     */
+    setSilenceTime(startHour: number, startMinute: number, endHour: number, endMinute: number)
+```
+
+### 代码示例
+
+```
+  // 晚上 22:30 到次日早上 8:30 为静音时段
+  setSilenceTime(22, 30, 8, 30)
+```
+
+### 参数说明
+
+- startHour
+    - 静默时段的开始时间-小时，24 小时制，0-23。
+- startMinute
+    - 静默时段的开始时间-分钟，0-59。
+- endHour
+    - 静默时段的结束时间-小时，24 小时制，0-23。
+- endMinute
+    - 静默时段的结束时间-分钟，0-59。
+
+## 触发通知状态检查（triggerNotificationStateCheck）
+
+### 功能说明
+
+主动触发一次通知状态检查；若当前应用的通知开关状态相对上次有变化，会上报。用于在适当时机（如从设置页返回）刷新并上报通知开关状态。
+
+- **Android**：已实现，行为与极光 Android 文档一致（JPush Android SDK v5.9.0+）。
+- **iOS**：官方 SDK 无此 API，当前为占位实现，调用无效果。
+- **鸿蒙**：官方 SDK 无此 API，当前为占位实现，调用无效果。
+
+### 接口定义
+
+```
+    /**
+     * 主动触发通知状态检查，若有变化则上报
+     */
+    triggerNotificationStateCheck()
+```
+
+### 代码示例
+
+```
+  triggerNotificationStateCheck()
+```
+
+### 参数说明
+
+- 无参数。
+
+## 上报通知打开事件（reportNotificationOpened）
+
+### 功能说明
+
+用于上报用户点击了通知栏某条通知，或上报自定义消息被展示等需要统计的客户端事件。便于服务端/统计侧区分「送达」与「打开」。
+
+- **Android**：已实现，行为与极光 Android 文档一致（JPush Android SDK v1.6.1+）。msgId 来源于推送 Extra 中的 `EXTRA_MSG_ID`。
+- **iOS**：官方 SDK 无此独立接口，当前为占位实现，调用无效果。
+- **鸿蒙**：已实现，内部等价为「上报通知点击」reportNotificationClick(1, msgId)（1 表示极光通道）。
+
+### 接口定义
+
+```
+    /**
+     * 上报通知打开事件
+     * @param msgId 推送消息唯一 ID（来源于推送 Extra 的 EXTRA_MSG_ID）
+     * @param channel 可选，仅鸿蒙有效：0=厂商通道，1=极光通道；不传时鸿蒙默认极光通道，可从 JMessage.channel 传入
+     */
+    reportNotificationOpened(msgId: string, channel?: number)
+```
+
+### 代码示例
+
+```
+  // 在点击通知或展示自定义消息时，从消息体取出 msgId 后调用
+  reportNotificationOpened(msgId)
+  // 鸿蒙若已知通道（如从 JMessage.channel），可传入
+  reportNotificationOpened(msgId, message.channel)
+```
+
+### 参数说明
+
+- msgId
+    - 推送每一条消息/通知对应的唯一 ID，来源于服务端下发的 Extra 字段（Android 为 `JPushInterface.EXTRA_MSG_ID`）。
+- channel
+    - 可选。仅鸿蒙使用：0=厂商通道，1=极光通道；不传时默认极光通道。Android/iOS 忽略此参数。
 
   
 

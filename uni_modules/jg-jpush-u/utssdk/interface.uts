@@ -12,6 +12,44 @@ export type EventCallBackParams = {
 	callback?: (res: EventCallBack) => void
 }
 
+/**
+ * 本地通知参数（与 Android JPushLocalNotification 语义对齐）。
+ * notificationId 建议为正整数，为 0 或负数时在 Android 上可能导致无法清除。
+ * broadcastTime 为触发时间的毫秒时间戳（Date.getTime()）；若为过去时间，Android 会使用当前时间。
+ */
+export type LocalNotificationOptions = {
+	/** 本地通知 ID，必填；建议为正整数 */
+	notificationId: number
+	/** 触发时间（毫秒时间戳） */
+	broadcastTime: number
+	/** 通知标题 */
+	title?: string
+	/** 通知内容 */
+	content?: string
+	/** 额外数据，JSON 字符串 */
+	extras?: string
+	/** 通知栏样式 builder 编号（Android） */
+	builderId?: number
+	/** 分类（如 Notification.CATEGORY_ALARM），Android 5.2.0+ */
+	category?: string
+	/** 优先级，Android 如 Notification.PRIORITY_DEFAULT(0)；-2~2 */
+	priority?: number
+	/** 通知渠道 ID（Android 8.0+） */
+	channelId?: string
+}
+
+/** 可选个人信息采集控制项（Android 支持 imei/imsi/mac/ssid/bssid/cell/wifi，iOS 支持 ssid/bssid/cell/gps）。未传或未设置的项保持 SDK 默认。 */
+export type CollectControlOptions = {
+	imei?: boolean
+	imsi?: boolean
+	mac?: boolean
+	ssid?: boolean
+	bssid?: boolean
+	cell?: boolean
+	wifi?: boolean
+	gps?: boolean
+}
+
 // /**
 //  * 错误码
 //  * 根据uni错误码规范要求，建议错误码以90开头，以下是错误码示例：

@@ -14,7 +14,9 @@ import { Selector, NSString } from 'Foundation';
 import { UNUserNotificationCenter } from 'UserNotifications';
 
 /* 引入 interface.uts 文件中定义的变量 */
-import { EventCallBackParams, EventCallBack } from '../interface.uts';
+import { EventCallBackParams, EventCallBack, CollectControlOptions, LocalNotificationOptions } from '../interface.uts';
+
+export type { CollectControlOptions, LocalNotificationOptions } from '../interface.uts'
 
 const TAG = "| JIGUANG | JPUSH-uni-"
 
@@ -482,6 +484,28 @@ export function checkTagBindState(sequence : Int, tag : string) : void {
 	JPUSHService.validTag(tag, completion = callback, seq = sequence)
 }
 
+/**
+ * 筛选有效标签。用于在 setTags/addTags 前过滤无效 tag，避免因单个无效 tag 导致整次设置失败。
+ * 调用原生 JPUSHService.filterValidTags，若超出数量/总长限制则返回靠前的有效 tag。
+ * @param tags 待校验的标签数组
+ * @returns 有效标签数组
+ */
+export function filterValidTags(tags : string[]) : string[] {
+	if (tags == null || tags.length == 0) return []
+	const inputSet : Swift.Set<String> = new Swift.Set<String>(tags)
+	const validSet = JPUSHService.filterValidTags(inputSet)
+	if (validSet == null) return []
+	const arr = validSet.allObjects()
+	if (arr == null) return []
+	const result : string[] = []
+	for (let i = 0; i < arr.length; i++) {
+		const obj = arr[i]
+		if (obj != null && typeof obj === 'string') {
+			result.push(obj as string)
+		}
+	}
+	return result
+}
 
 /**
  * 设置别名
@@ -618,3 +642,94 @@ export function getBadgeNumber() : number {
 	return Number(badgeNumber)
 }
 
+
+/**
+ * 设置数据采集控制（iOS 支持 ssid/bssid/cell/gps）
+ */
+export function setCollectControl(options : CollectControlOptions | null) : void {
+	log("setCollectControl", options)
+	const control = JPushCollectControl()
+	if (options != null) {
+		if (options.ssid === false) control.ssid = false
+		if (options.bssid === false) control.bssid = false
+		if (options.cell === false) control.cell = false
+		if (options.gps === false) control.gps = false
+	}
+	JPUSHService.setCollectControl(control)
+}
+
+/**
+ * 设置地理围栏监控周期（iOS 对应 setGeofenecePeriodForInside，单位统一为毫秒，内部转为秒）
+ * @param intervalMs 监控周期，单位毫秒；默认 15 分钟检测一次
+ */
+export function setGeofenceInterval(intervalMs : number) : void {
+	log("setGeofenceInterval", intervalMs)
+	const seconds = Math.floor(intervalMs / 1000)
+	JPUSHService.setGeofenecePeriodForInside(seconds)
+}
+
+/**
+ * 设置允许保存的最大地理围栏个数（iOS 对应 setGeofeneceMaxCount；iOS 系统最大 20）
+ * @param maxNumber 最多允许保存的围栏个数；iOS 最大 20，超过时按 20 处理
+ */
+export function setMaxGeofenceNumber(maxNumber : number) : void {
+	log("setMaxGeofenceNumber", maxNumber)
+	const count = Math.min(20, Math.max(1, Math.floor(maxNumber)))
+	JPUSHService.setGeofeneceMaxCount(count)
+}
+
+/**
+ * 删除指定 id 的地理围栏（iOS 对应 removeGeofenceWithIdentifier）
+ * @param geofenceId 地理围栏 id
+ */
+export function deleteGeofence(geofenceId : string) : void {
+	log("deleteGeofence", geofenceId)
+	JPUSHService.removeGeofenceWithIdentifier(geofenceId)
+}
+
+// MARK: - 本地通知（Local Notification）
+
+/**
+ * 添加本地通知（iOS 使用 JPushNotificationRequest，与 Android 语义对齐）
+ */
+export function addLocalNotification(options : LocalNotificationOptions) : void {
+	log("addLocalNotification", options)
+	const content = JPushNotificationContent.alloc().init()
+	content.title = options.title ?? ""
+	content.body = options.content ?? ""
+	if (options.extras != null && options.extras!.length > 0) {
+		content.userInfo = ["extras": options.extras!]
+	} else {
+		content.userInfo = [:]
+	}
+	const trigger = JPushNotificationTrigger.alloc().init()
+	const nowMs = Date().getTime()
+	let interval = (options.broadcastTime - nowMs) / 1000.0
+	if (interval < 1) interval = 1
+	trigger.timeInterval = interval
+	trigger.repeat = false
+	const request = JPushNotificationRequest.alloc().init()
+	request.requestIdentifier = String(options.notificationId)
+	request.content = content
+	request.trigger = trigger
+	JPUSHService.addNotification(request)
+}
+
+/**
+ * 移除指定 ID 的本地通知
+ */
+export function removeLocalNotification(notificationId : number) : void {
+	log("removeLocalNotification", notificationId)
+	const identifier = JPushNotificationIdentifier.alloc().init()
+	identifier.identifiers = [String(notificationId)]
+	identifier.delivered = false
+	JPUSHService.removeNotification(identifier)
+}
+
+/**
+ * 清除所有本地通知
+ */
+export function clearLocalNotifications() : void {
+	log("clearLocalNotifications")
+	JPUSHService.removeNotification(null)
+}

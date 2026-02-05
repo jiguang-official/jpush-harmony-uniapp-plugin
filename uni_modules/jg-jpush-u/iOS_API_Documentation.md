@@ -18,6 +18,35 @@ export type InitPushParams = {
 }
 ```
 
+### CollectControlOptions
+数据采集控制项（用于 setCollectControl）。iOS 支持 ssid、bssid、cell、gps；未传或未设为 `false` 的项保持 SDK 默认（采集）。
+
+```typescript
+export type CollectControlOptions = {
+    ssid?: boolean,   // SSID 信息
+    bssid?: boolean,  // BSSID 信息
+    cell?: boolean,   // 基站信息
+    gps?: boolean     // 经纬度信息
+}
+```
+
+### LocalNotificationOptions
+本地通知参数（用于 addLocalNotification）。iOS 侧使用 JPush 2.1.9+ 的 `addNotification`，会映射为 `JPushNotificationContent`（title、body、userInfo）和 `JPushNotificationTrigger`（按 `broadcastTime` 计算 timeInterval）。
+
+```typescript
+export type LocalNotificationOptions = {
+    notificationId: number,  // 必填，本地通知 ID，用作 requestIdentifier，建议为正整数
+    broadcastTime: number,   // 必填，触发时间（毫秒时间戳），用于计算 timeInterval
+    title?: string,         // 通知标题 → content.title
+    content?: string,       // 通知内容 → content.body
+    extras?: string,        // 额外数据（JSON 字符串）→ content.userInfo["extras"]
+    builderId?: number,     // 本平台未使用
+    category?: string,      // 可选，未在当前实现中设置
+    priority?: number,      // 本平台未使用
+    channelId?: string     // 本平台未使用
+}
+```
+
 ## 核心API方法
 
 ### 1. 初始化与配置
@@ -260,6 +289,100 @@ resetBadge()  // 清除角标
 ```typescript
 const badge = getBadgeNumber()
 console.log('当前角标数量:', badge)
+```
+
+### 7. 本地通知
+
+通过极光 SDK 在应用内添加定时本地通知，不依赖网络。iOS 使用 JPush 2.1.9+ 的 `addNotification` / `removeNotification` 实现。
+
+#### addLocalNotification(options: LocalNotificationOptions)
+添加一条本地通知。内部会构建 `JPushNotificationContent`、`JPushNotificationTrigger`（基于 `broadcastTime` 的 timeInterval）、`JPushNotificationRequest` 并调用极光 `addNotification`。
+
+**参数：**
+- `options`: LocalNotificationOptions（见上方数据类型）
+  - `notificationId`、`broadcastTime` 必填
+  - `title`、`content`、`extras` 等可选
+
+**示例：**
+```typescript
+import { addLocalNotification, type LocalNotificationOptions } from '@/uni_modules/jg-jpush-u'
+
+addLocalNotification({
+    notificationId: 10001,
+    broadcastTime: Date.now() + 10 * 60 * 1000, // 10 分钟后
+    title: '提醒',
+    content: '这是一条本地通知',
+    extras: '{"key":"value"}'
+})
+```
+
+#### removeLocalNotification(notificationId: number)
+移除指定 ID 的本地通知（对应极光 `removeNotification` 传入该 identifier）。
+
+**示例：**
+```typescript
+removeLocalNotification(10001)
+```
+
+#### clearLocalNotifications()
+清除所有本地通知（对应极光 `removeNotification(nil)`）。
+
+**示例：**
+```typescript
+clearLocalNotifications()
+```
+
+### 8. 数据采集控制（仅 iOS 支持部分项）
+
+#### setCollectControl(options: CollectControlOptions | null)
+设置可选个人信息采集控制。iOS 支持关闭 ssid、bssid、cell、gps 的采集；未传或未设为 `false` 的项保持 SDK 默认（采集）。需在初始化前或初始化后尽早调用。
+
+**参数：**
+- `options`: CollectControlOptions | null
+  - `ssid?: boolean` - 设为 `false` 不采集 SSID
+  - `bssid?: boolean` - 设为 `false` 不采集 BSSID
+  - `cell?: boolean` - 设为 `false` 不采集基站信息
+  - `gps?: boolean` - 设为 `false` 不采集经纬度
+
+**示例：**
+```typescript
+setCollectControl({ gps: false })
+setCollectControl({ ssid: false, bssid: false, cell: false, gps: false })
+```
+
+### 9. 地理围栏
+
+#### setGeofenceInterval(intervalMs: number)
+设置地理围栏监控周期。参数统一为毫秒，内部会转为 iOS 的秒（对应 `setGeofenecePeriodForInside`）。默认 15 分钟检测一次。
+
+**参数：**
+- `intervalMs`: number - 监控周期，毫秒
+
+**示例：**
+```typescript
+setGeofenceInterval(15 * 60 * 1000)  // 15 分钟
+```
+
+#### setMaxGeofenceNumber(maxNumber: number)
+设置允许保存的最大地理围栏个数。iOS 系统最大 20，传入大于 20 时按 20 处理（对应 `setGeofeneceMaxCount`）。
+
+**参数：**
+- `maxNumber`: number - 最多允许保存的围栏个数
+
+**示例：**
+```typescript
+setMaxGeofenceNumber(20)
+```
+
+#### deleteGeofence(geofenceId: string)
+删除指定 id 的地理围栏（对应 `removeGeofenceWithIdentifier`）。
+
+**参数：**
+- `geofenceId`: string - 地理围栏 id
+
+**示例：**
+```typescript
+deleteGeofence("your_geofence_id")
 ```
 
 ## 事件回调
