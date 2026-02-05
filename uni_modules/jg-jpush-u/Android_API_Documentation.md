@@ -270,6 +270,24 @@ setMobileNumber(10, "13800138000")
 setLatestNotificationNumber(10)
 ```
 
+#### setPushTime(weekDays: number[] | null, startHour: number, endHour: number)
+设置允许推送的时间段。默认任何时间都允许推送；调用此 API 后，仅在该时间段内会展示通知，其余时间收到的通知会被丢弃（纯客户端逻辑，**仅对通知有效，自定义消息不受影响**）。
+
+**参数：**
+- `weekDays`: number[] | null - 允许推送的星期：0=周日、1=周一…6=周六；传 `null` 表示任何时间都可收到；传空数组 `[]` 表示任何时间都收不到
+- `startHour`: number - 允许推送的开始小时（24 小时制，0-23）
+- `endHour`: number - 允许推送的结束小时（24 小时制，0-23）
+
+**示例：**
+```typescript
+// 周一到周五、上午 10 点到晚上 23 点允许推送
+setPushTime([1, 2, 3, 4, 5], 10, 23)
+// 任何时间都可收到
+setPushTime(null, 0, 23)
+// 任何时间都收不到通知
+setPushTime([], 0, 0)
+```
+
 #### clearNotificationAll()
 清除所有通知
 

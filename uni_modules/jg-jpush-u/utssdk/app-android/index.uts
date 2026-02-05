@@ -1,6 +1,7 @@
 import JPushInterface from 'cn.jpush.android.api.JPushInterface'
 import JCoreInterface from 'cn.jiguang.api.JCoreInterface'
 import JPushConfig from 'cn.jpush.android.data.JPushConfig'
+import HashSet from 'java.util.HashSet'
 
 export * from './PushMessageReceiver.uts'
 export { PushService } from "./PushService.uts"
@@ -113,6 +114,27 @@ export const getRegistrationId = function () : string {
 export const setLatestNotificationNumber = function (maxNum : Int) {
 	console.log(TAG, "setLatestNotificationNumber", maxNum)
 	JPushInterface.setLatestNotificationNumber(UTSAndroid.getAppContext(), maxNum)
+}
+
+/**
+ * 设置允许推送的时间段（仅 Android 支持）
+ * 默认任何时间都允许推送。调用此 API 后，仅在该时间段内会展示通知，其余时间收到的通知会被丢弃（仅对通知有效，自定义消息不受影响）。
+ * @param weekDays 允许推送的星期，0=周日、1=周一…6=周六；传 null 表示任何时间都可收到；传空数组 [] 表示任何时间都收不到
+ * @param startHour 允许推送的开始小时（24 小时制，0-23）
+ * @param endHour 允许推送的结束小时（24 小时制，0-23）
+ */
+export const setPushTime = function (weekDays : number[] | null, startHour : number, endHour : number) {
+	console.log(TAG, "setPushTime", weekDays, startHour, endHour)
+	const context = UTSAndroid.getAppContext()
+	if (weekDays === null) {
+		JPushInterface.setPushTime(context, null, startHour, endHour)
+		return
+	}
+	const daysSet = new HashSet()
+	for (let i = 0; i < weekDays.length; i++) {
+		daysSet.add(weekDays[i])
+	}
+	JPushInterface.setPushTime(context, daysSet, startHour, endHour)
 }
 
 export const clearNotificationAll = function () {
