@@ -1,3 +1,5 @@
+## 1.2.4（2026-02-06）
+添加requestRequiredPermission和requestPermission 问题处理
 ## 1.2.3（2026-01-29）
 1. update ios sdk 6.0.0
 2. iOS 新增 getPushStatus 接口

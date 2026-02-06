@@ -334,7 +334,8 @@ export const requestPermission = function () {
 	if (activity != null) {
 		JPushInterface.requestPermission(activity)
 	} else {
-		console.log(TAG, "requestPermission: no Activity, skip (call when Activity available)")
+		console.log(TAG, "requestPermission: getUniActivity() is null, fallback to getAppContext()")
+		JPushInterface.requestPermission(UTSAndroid.getAppContext())
 	}
 }
 
@@ -344,7 +345,6 @@ export const requestPermission = function () {
  */
 export const requestRequiredPermission = function () {
 	console.log(TAG, "requestRequiredPermission")
-	// 官方 API 需要 Activity，优先使用当前 Activity
 	const activity = UTSAndroid.getUniActivity()
 	if (activity != null) {
 		JPushInterface.requestRequiredPermission(activity)
