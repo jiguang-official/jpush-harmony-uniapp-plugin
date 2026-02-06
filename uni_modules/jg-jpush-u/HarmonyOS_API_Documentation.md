@@ -69,10 +69,13 @@ setChannel("AppGallery")
 ```
 
 #### setUserRequestNotificationPermission(enable: boolean)
-配置用户通知权限申请方式
+配置用户通知权限申请方式（v1.3.0+，须在 `init` 前调用）。
+
+- `enable === true`：由开发者自己在代码中申请通知权限，SDK 不主动申请。
+- `enable === false`：由极光 SDK 在初始化时自动申请通知权限（默认）。
 
 **参数：**
-- `enable`: boolean - 是否启用用户请求通知权限
+- `enable`: boolean - 是否由开发者自己申请通知权限
 
 **示例：**
 ```typescript

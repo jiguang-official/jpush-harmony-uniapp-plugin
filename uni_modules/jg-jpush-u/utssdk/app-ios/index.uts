@@ -356,6 +356,91 @@ export function getPushStatus(callback : (code : number, isStopped : boolean) =>
 }
 
 /**
+ * 设置 PUSH 开关（v5.0.0+）。关闭后收不到极光通知、自定义消息、LiveActivity 推送，默认开启。
+ * @param isEnable true 开启，false 关闭
+ * @param completion 可选，结果码回调，0 表示成功
+ */
+export function setPushEnable(isEnable : boolean, completion : ((code : number) => void) | null) : void {
+	log("setPushEnable", isEnable)
+	const block = (iResCode : Int) => {
+		if (completion != null) {
+			completion(iResCode as number)
+		}
+	}
+	JPUSHService.setPushEnable(isEnable, completion = block)
+}
+
+/**
+ * 应用内消息：进入页面时调用，须与 pageLeave 配套使用（v5.0.0+）
+ * @param pageName 页面名
+ */
+export function pageEnterTo(pageName : string) : void {
+	log("pageEnterTo", pageName)
+	JPUSHService.pageEnterTo(pageName)
+}
+
+/**
+ * 应用内消息：离开页面时调用，须与 pageEnterTo 配套使用（v5.0.0+）
+ * @param pageName 页面名
+ */
+export function pageLeave(pageName : string) : void {
+	log("pageLeave", pageName)
+	JPUSHService.pageLeave(pageName)
+}
+
+/**
+ * 上报用户经纬度（地理位置统计，v1.8.0+）
+ * @param latitude 纬度
+ * @param longitude 经度
+ */
+export function setLatitude(latitude : number, longitude : number) : void {
+	log("setLatitude", latitude, longitude)
+	JPUSHService.setLatitude(latitude, longitude: longitude)
+}
+
+/**
+ * 检测/请求通知授权状态（3.2.8+）。授权结果通过 status 返回。
+ * @param completion status: 0=未决定 1=拒绝 2=授权 3=临时授权(iOS12+)
+ */
+export function requestNotificationAuthorization(completion : (status : number) => void) : void {
+	log("requestNotificationAuthorization")
+	const block = (status : JPAuthorizationStatus) => {
+		completion(status as number)
+	}
+	JPUSHService.requestNotificationAuthorization(block)
+}
+
+/**
+ * 跳转至系统应用通知设置页（iOS 8+）
+ * @param completionHandler 可选，success 表示是否成功跳转
+ */
+export function openSettingsForNotification(completionHandler : ((success : boolean) => void) | null) : void {
+	log("openSettingsForNotification")
+	const block = (success : Boolean) => {
+		if (completionHandler != null) {
+			completionHandler(success as boolean)
+		}
+	}
+	JPUSHService.openSettingsForNotification(block)
+}
+
+/**
+ * 设置用户分群推送功能开关（v5.4.0+），默认开启
+ */
+export function setSmartPushEnable(isEnable : boolean) : void {
+	log("setSmartPushEnable", isEnable)
+	JPUSHService.setSmartPushEnable(isEnable)
+}
+
+/**
+ * 设置应用数据洞察扩展功能开关（v5.7.0+），默认开启
+ */
+export function setDataInsightsEnable(isEnable : boolean) : void {
+	log("setDataInsightsEnable", isEnable)
+	JPUSHService.setDataInsightsEnable(isEnable)
+}
+
+/**
  * 获取RegistrationID
  */
 export function getRegistrationId() : string {

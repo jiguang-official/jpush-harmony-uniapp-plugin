@@ -24,7 +24,7 @@
 | 设置AppKey | - | - | `setAppKey(appKey: string)` | 仅HarmonyOS支持 |
 | 设置渠道 | - | `setChannel(channel: string)` | `setChannel(channel: string)` | iOS在初始化时设置，Android和HarmonyOS单独设置 |
 | 设置心跳周期 | - | - | `setHeartbeatTime(heartbeatTime: number)` | 仅HarmonyOS支持 |
-| 设置通知权限申请方式 | - | - | `setUserRequestNotificationPermission(enable: boolean)` | 仅HarmonyOS支持 |
+| 设置通知权限申请方式 | `setUserRequestNotificationPermission(enable: boolean)` 占位无效果 | `setUserRequestNotificationPermission(enable: boolean)` 占位无效果 | `setUserRequestNotificationPermission(enable: boolean)` | 仅 HarmonyOS 有实际效果；Android/iOS 暴露同名方法便于跨平台调用，行为为 no-op |
 
 ### 2. 设备标识管理
 
@@ -37,10 +37,11 @@
 
 | 功能 | iOS | Android | HarmonyOS | 说明 |
 |------|-----|---------|-----------|------|
-| 停止推送 | - | `stopPush()` | `stopPush()` | iOS不支持 |
-| 恢复推送 | - | `resumePush()` | `resumePush()` | iOS不支持 |
-| 检查推送状态 | - | `isPushStopped(): boolean` | `isPushStopped(): boolean \| undefined` | iOS不支持 |
-| 获取推送连接状态 | - | `getConnectionState(): boolean` | `getConnectionState(): boolean \| undefined` | 仅 Android 支持 |
+| 设置 PUSH 开关 | `setPushEnable(isEnable: boolean, completion?: (code: number) => void)` | 同左（占位，建议用 stopPush/resumePush） | 同左（占位） | 仅 iOS 有实际效果；关闭后收不到通知/自定义消息/LiveActivity |
+| 停止推送 | - | `stopPush()` | `stopPush()` | iOS 用 setPushEnable(false) |
+| 恢复推送 | - | `resumePush()` | `resumePush()` | iOS 用 setPushEnable(true) |
+| 检查推送状态 | `getPushStatus(callback)` | `isPushStopped(): boolean` | `isPushStopped(): boolean \| undefined` | 三端均有 |
+| 获取推送连接状态 | - | `getConnectionState(): boolean` | `getConnectionState(): boolean \| undefined` | 仅 Android/Harmony 支持 |
 
 ### 4. 标签管理
 
@@ -87,10 +88,12 @@
 | 根据ID清除通知 | - | `clearNotificationById(notificationId: Int)` | `clearNotificationById(id: number)` | iOS不支持 |
 | 根据消息ID清除通知 | - | - | `clearNotificationByMsgId(msgId: string)` | 仅HarmonyOS支持 |
 
-### 9. 生命周期管理
+### 9. 生命周期与应用内消息
 
 | 功能 | iOS | Android | HarmonyOS | 说明 |
 |------|-----|---------|-----------|------|
+| 应用内消息-进入页面 | `pageEnterTo(pageName: string)` | `pageEnterTo(pageName: string)`（内部 onFragmentResume） | 同左（占位） | 应用内消息需配套 pageLeave 使用 |
+| 应用内消息-离开页面 | `pageLeave(pageName: string)` | `pageLeave(pageName: string)`（内部 onFragmentPause） | 同左（占位） | 与 pageEnterTo 配套 |
 | 应用恢复 | - | `onResume()` | - | 仅Android支持 |
 | 应用暂停 | - | `onPause()` | - | 仅Android支持 |
 | Fragment恢复 | - | `onFragmentResume(fragmentName: string)` | - | 仅Android支持 |
@@ -101,22 +104,25 @@
 
 | 功能 | iOS | Android | HarmonyOS | 说明 |
 |------|-----|---------|-----------|------|
-| 请求通知权限 | - | `requestPermission()` | - | 仅Android支持 |
+| 请求/检测通知授权状态 | `requestNotificationAuthorization(completion: (status: number) => void)` | 同左（占位，建议用 requestPermission） | 同左（占位） | 仅 iOS 有实际效果；status: 0 未决定 1 拒绝 2 授权 3 临时授权 |
+| 跳转到通知设置 | `openSettingsForNotification(completion?: (success: boolean) => void)` | 同左（内部即 goToAppNotificationSettings） | 同左（占位） | iOS/Android 有实际效果 |
+| 请求通知权限（Activity） | - | `requestPermission()` | - | 仅Android支持 |
 | 检查通知权限状态 | - | `isNotificationEnabled(): number` | - | 仅Android支持 |
-| 跳转到通知设置 | - | `goToAppNotificationSettings()` | - | 仅Android支持 |
+| 跳转到通知设置（旧名） | - | `goToAppNotificationSettings()` | - | 与 openSettingsForNotification 等价 |
 | 触发通知状态检查 | - | `triggerNotificationStateCheck()` | - | 仅Android支持 |
 | 上报通知打开事件 | - | `reportNotificationOpened(msgId: string, channel?: number)` | 同左，channel 可选（0=厂商 1=极光），不传默认极光通道 | Android/鸿蒙支持 |
 
-### 11. 智能推送设置
+### 11. 智能推送与统计
 
 | 功能 | iOS | Android | HarmonyOS | 说明 |
 |------|-----|---------|-----------|------|
-| 设置智能推送开关 | - | `setSmartPushEnable(isEnable: boolean)` | `setSmartPushEnable(enable: boolean)` | iOS不支持 |
+| 设置智能推送开关 | `setSmartPushEnable(isEnable: boolean)` | `setSmartPushEnable(isEnable: boolean)` | `setSmartPushEnable(enable: boolean)` | 三端均已实现 |
+| 设置数据洞察开关 | `setDataInsightsEnable(isEnable: boolean)` | `setDataInsightsEnable(isEnable: boolean)` | `setDataInsightsEnable(enable: boolean)` | 三端均已实现 |
+| 上报经纬度 | `setLatitude(latitude: number, longitude: number)` | 同左（占位） | 同左（占位） | 仅 iOS 有实际效果，用于地理位置统计 |
 | 设置地理围栏开关 | - | `setGeofenceEnable(isEnable: boolean)` | - | 仅Android支持 |
 | 设置地理围栏监控周期 | `setGeofenceInterval(intervalMs: number)` | `setGeofenceInterval(intervalMs: number)` | 占位 | Android/iOS 已实现 |
 | 设置最大地理围栏个数 | `setMaxGeofenceNumber(maxNumber: number)` | `setMaxGeofenceNumber(maxNumber: number)` | 占位 | Android 1-100，iOS 最大 20 |
 | 删除地理围栏 | `deleteGeofence(geofenceId: string)` | `deleteGeofence(geofenceId: string)` | 占位 | Android/iOS 已实现 |
-| 设置数据洞察开关 | - | `setDataInsightsEnable(isEnable: boolean)` | `setDataInsightsEnable(enable: boolean)` | iOS不支持 |
 
 ### 12. 消息处理（HarmonyOS特有）
 
