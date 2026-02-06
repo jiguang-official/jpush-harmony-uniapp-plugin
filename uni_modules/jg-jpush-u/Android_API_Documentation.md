@@ -340,11 +340,31 @@ onKillProcess()
 ### 9. 权限管理
 
 #### requestPermission()
-请求通知权限
+请求通知权限。用于弹出系统通知权限授权对话框。
+
+**实现说明：**
+- 本接口内部使用 **Activity 上下文**（`UTSAndroid.getUniActivity()`）调用极光 SDK 的 `requestPermission`，以便在正确的 Activity 上弹出权限对话框，符合 Android 权限请求的最佳实践。
+- 若当前无法获取 Activity（如非 Activity 场景调用），会自动回退为 Application 上下文（`UTSAndroid.getAppContext()`），并输出日志，避免空指针。
+- **建议**：在用户可见的页面（如设置页、首页 onShow）中调用，以确保能拿到 Activity，权限弹窗体验更好。
 
 **示例：**
 ```typescript
 requestPermission()
+```
+
+#### requestRequiredPermission()
+申请必须的系统权限（仅 Android）。例如 Android 13+ 的 `POST_NOTIFICATIONS`（通知权限），需用户授权后才能正常接收推送。
+
+**实现说明：**
+- 本接口内部使用 **Activity 上下文**（`UTSAndroid.getUniActivity()`）调用极光 SDK 的 `requestRequiredPermission`，以便正确弹出系统权限对话框。
+- 若当前无法获取 Activity，会跳过本次请求并输出日志，**不会**回退为 Application 上下文。建议在 Activity 可见时再调用（如首屏 `onReady`、设置页等）。
+
+**建议调用时机：**
+- 在用户可见的页面调用，例如首屏 `onReady`、或进入「通知设置」相关页面时，以确保能拿到 Activity，权限弹窗可正常展示。
+
+**示例：**
+```typescript
+requestRequiredPermission()
 ```
 
 #### isNotificationEnabled(): number

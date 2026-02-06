@@ -217,7 +217,27 @@ export const onKillProcess = function () {
 
 export const requestPermission = function () {
 	console.log(TAG, "requestPermission")
-	JPushInterface.requestPermission(UTSAndroid.getAppContext())
+	const activity = UTSAndroid.getUniActivity()
+	if (activity != null) {
+		JPushInterface.requestPermission(activity)
+	} else {
+		console.log(TAG, "requestPermission: getUniActivity() is null, fallback to getAppContext()")
+		JPushInterface.requestPermission(UTSAndroid.getAppContext())
+	}
+}
+
+/**
+ * 申请必须权限（仅 Android，如 POST_NOTIFICATIONS，Android 13+）
+ * 建议在 Activity 可见时调用（如首屏 onReady），以便正确弹出系统权限框。
+ */
+export const requestRequiredPermission = function () {
+	console.log(TAG, "requestRequiredPermission")
+	const activity = UTSAndroid.getUniActivity()
+	if (activity != null) {
+		JPushInterface.requestRequiredPermission(activity)
+	} else {
+		console.log(TAG, "requestRequiredPermission: no Activity, skip (call when Activity available)")
+	}
 }
 
 export const isNotificationEnabled = function () : number {
