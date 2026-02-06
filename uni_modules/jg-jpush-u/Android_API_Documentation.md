@@ -90,6 +90,14 @@ const isStopped = isPushStopped()
 console.log('推送服务状态:', isStopped)
 ```
 
+#### getPushStatus()
+获取当前推送状态（与 stopPush/resumePush 相关，由 SDK 返回状态值）。
+
+**示例：**
+```typescript
+const status = getPushStatus()
+```
+
 #### getConnectionState(): boolean
 获取当前 Push 长连接状态（仅 Android 支持）。连接状态变化时可通过 CONNECTION 广播或 JPushMessageReceiver 获知。
 
@@ -322,7 +330,7 @@ setPushTime([], 0, 0)
 ```
 
 #### setSilenceTime(startHour: number, startMinute: number, endHour: number, endMinute: number)
-设置通知静默时间。在静默时段内收到的通知不会有铃声和震动（仅对通知有效）。
+设置通知静默时间（仅 Android 支持）。在静默时段内收到的通知不会有铃声和震动（仅对通知有效）。
 
 **参数：**
 - `startHour`: number - 静默开始-小时（24 小时制，0-23）
@@ -454,7 +462,7 @@ onKillProcess()
 ### 9. 权限管理
 
 #### requestPermission()
-请求通知权限。官方 API 需要 Activity，建议在首屏 Activity 可见时调用（如 onReady）。若当前无 Activity 则仅打日志不调用 SDK。
+请求通知权限（仅 Android）。官方 API 建议传入 Activity；本实现在有 Activity 时使用 Activity，无 Activity 时使用 Application 上下文仍会调用 SDK。建议在 Activity 可见时调用以获得最佳体验。
 
 **示例：**
 ```typescript
@@ -462,7 +470,7 @@ requestPermission()
 ```
 
 #### requestRequiredPermission()
-申请必须权限。建议在首屏 Activity 可见时调用（如 onReady），以便正确弹出系统权限框。若当前无 Activity 则仅打日志不调用 SDK。
+申请必须权限（仅 Android，如 POST_NOTIFICATIONS，Android 13+）。建议在 Activity 可见时调用（如首屏 onReady），以便正确弹出系统权限框。若无当前 Activity 则不会调用 SDK（仅打日志）。
 
 **示例：**
 ```typescript
@@ -482,7 +490,7 @@ console.log('通知权限状态:', status)
 ```
 
 #### goToAppNotificationSettings()
-跳转到应用通知设置页面
+跳转到应用通知设置页面。
 
 **示例：**
 ```typescript
