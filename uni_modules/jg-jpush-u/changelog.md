@@ -1,3 +1,5 @@
+## 1.2.5（2026-05-13）
+解决iOS偶现上报不了devicetoken的问题
 ## 1.2.4（2026-02-06）
 添加requestRequiredPermission和requestPermission 问题处理
 ## 1.2.3（2026-01-29）
