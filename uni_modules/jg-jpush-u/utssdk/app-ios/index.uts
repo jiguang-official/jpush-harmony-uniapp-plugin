@@ -166,16 +166,6 @@ class JGPushModule implements JPUSHRegisterDelegate {
 	 */
 	initPush(param : InitPushParams) {
 		log("JGPushModule initPush", param)
-		// 创建推送注册实体
-		const entity = JPUSHRegisterEntity()
-		const types = new JPAuthorizationOptions(rawValue = (JPAuthorizationOptions.alert.rawValue |
-			JPAuthorizationOptions.sound.rawValue |
-			JPAuthorizationOptions.badge.rawValue))
-		entity.types = Int(types.rawValue)
-
-		// 注册远程通知配置
-		JPUSHService.register(forRemoteNotificationConfig = entity, delegate = this)
-
 
 		const method = Selector("didReceiveCustomMessage:")
 		NotificationCenter.default.addObserver(this, selector = method, name = NSNotification.Name.jpfNetworkDidReceiveMessage, object = null)
@@ -190,6 +180,15 @@ class JGPushModule implements JPUSHRegisterDelegate {
 
 		// 初始化极光推送服务
 		JPUSHService.setup(withOption = this.launchOptions, appKey = param.appkey, channel = param.channel, apsForProduction = param.isProduction, advertisingIdentifier = param.advertisingId)
+
+		// 创建推送注册实体
+		const entity = JPUSHRegisterEntity()
+		const types = new JPAuthorizationOptions(rawValue = (JPAuthorizationOptions.alert.rawValue |
+			JPAuthorizationOptions.sound.rawValue |
+			JPAuthorizationOptions.badge.rawValue))
+		entity.types = Int(types.rawValue)
+		// 注册远程通知配置
+		JPUSHService.register(forRemoteNotificationConfig = entity, delegate = this)
 
 		log("极光推送SDK初始化完成")
 	}
