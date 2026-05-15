@@ -75,19 +75,51 @@ python3 .claude/skills/update-sdk/scripts/plugin_updater.py \
 
 ---
 
-## 第六步：更新子模块 Android config.json（按 --module 过滤）
+## 第六步：更新子模块（按 --module 过滤）
 
-读取 `.claude/skills/update-sdk/scripts/config.json` 中的 `uts_sub_modules` 列表，对每个需要更新的子模块：
+**先执行此命令获取完整子模块列表**（禁止硬编码，必须从 config.json 动态读取，防止遗漏 nio 等模块）：
 
-```python
-# 伪代码，实际由 Claude 逐个执行
-for module in selected_modules:
-    update config.json: dependencies 中厂商 SDK 的版本号
-    update package.json: version 字段
+```bash
+python3 -c "
+import json
+cfg = json.load(open('.claude/skills/update-sdk/scripts/config.json'))
+for m in cfg['uts_sub_modules']:
+    print(m['name'], m['android_config'], m['dep_prefix'], m['package_json'])
+"
 ```
 
-示例——更新 jg-jpush-u-huawei 子模块（若华为 SDK 版本需要同步更新）：
-读取 `uni_modules/jg-jpush-u-huawei/utssdk/app-android/config.json`，找到华为推送 SDK 的 dependency，更新版本。
+对每个需要更新的子模块（缺省全部 8 个：**fcm / huawei / honor / meizu / nio / oppo / vivo / xiaomi**），依次执行以下三步：
+
+**① 更新 android_config（config.json 中的 dep_prefix 对应依赖）**
+
+找到 `dependencies` 数组中以 `dep_prefix` 开头的条目，将版本号替换为新的 Android SDK 版本：
+
+```
+cn.jiguang.sdk.plugin:nio:旧版本  →  cn.jiguang.sdk.plugin:nio:<ANDROID_VERSION>
+```
+
+**② bump package.json 版本号（patch，规则同主模块）**
+
+读取 `package_json` 指向的文件，将 `version` 字段 +1 patch（如 1.2.2 → 1.2.3）。
+
+**③ 更新子模块 changelog.md（在文件最顶部插入新条目）**
+
+路径规则：`uni_modules/{module-name}/changelog.md`，格式如下：
+
+```
+## {新版本号}（{今日日期}）
+更新到{ANDROID_VERSION}
+```
+
+> **示例**——jg-jpush-u-nio 子模块（Android SDK 6.1.0，新版本 1.2.3，今日 2026-05-15）：
+>
+> android_config: `cn.jiguang.sdk.plugin:nio:6.0.1` → `cn.jiguang.sdk.plugin:nio:6.1.0`
+> package.json: `"version": "1.2.2"` → `"version": "1.2.3"`
+> changelog.md 顶部插入：
+> ```
+> ## 1.2.3（2026-05-15）
+> 更新到6.1.0
+> ```
 
 ---
 
