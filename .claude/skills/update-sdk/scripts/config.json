@@ -1,0 +1,132 @@
+{
+  "plugin_name": "jpush-harmony-uniapp-plugin",
+  "sdk_type": "jpush",
+  "platform": "uts",
+  "changelog_urls": {
+    "android": "https://docs.jiguang.cn/jpush/jpush_changelog/updates_Android",
+    "ios": "https://docs.jiguang.cn/jpush/jpush_changelog/updates_iOS",
+    "harmony": "https://docs.jiguang.cn/jpush/jpush_changelog/updates_HarmonyOS"
+  },
+  "version_refs": {
+    "android_sdk": {
+      "integration": "uts-config-json",
+      "files": [
+        {
+          "path": "uni_modules/jg-jpush-u/utssdk/app-android/config.json",
+          "dep_prefix": "cn.jiguang.sdk:jpush:"
+        }
+      ]
+    },
+    "ios_sdk": {
+      "integration": "direct-lib",
+      "files": []
+    },
+    "plugin": {
+      "files": [
+        {
+          "path": "uni_modules/jg-jpush-u/package.json",
+          "key": "version"
+        }
+      ]
+    }
+  },
+  "direct_sdk": {
+    "ios": {
+      "zip_subdir": "Lib/JPushSDKLib",
+      "dest_dir": "uni_modules/jg-jpush-u/utssdk/app-ios/Libs",
+      "xcframeworks": [
+        {
+          "name_glob": "jpush-ios-*.xcframework",
+          "slice": "ios-arm64",
+          "dest_subdir": "JPush"
+        },
+        {
+          "name_glob": "jcore-ios-*.xcframework",
+          "slice": "ios-arm64",
+          "dest_subdir": "JCore"
+        }
+      ]
+    }
+  },
+  "uts_sub_modules": [
+    {
+      "name": "jg-jpush-u-fcm",
+      "android_config": "uni_modules/jg-jpush-u-fcm/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:fcm:",
+      "package_json": "uni_modules/jg-jpush-u-fcm/package.json"
+    },
+    {
+      "name": "jg-jpush-u-huawei",
+      "android_config": "uni_modules/jg-jpush-u-huawei/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:huawei:",
+      "package_json": "uni_modules/jg-jpush-u-huawei/package.json"
+    },
+    {
+      "name": "jg-jpush-u-honor",
+      "android_config": "uni_modules/jg-jpush-u-honor/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:honor:",
+      "package_json": "uni_modules/jg-jpush-u-honor/package.json"
+    },
+    {
+      "name": "jg-jpush-u-meizu",
+      "android_config": "uni_modules/jg-jpush-u-meizu/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:meizu:",
+      "package_json": "uni_modules/jg-jpush-u-meizu/package.json"
+    },
+    {
+      "name": "jg-jpush-u-nio",
+      "android_config": "uni_modules/jg-jpush-u-nio/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:nio:",
+      "package_json": "uni_modules/jg-jpush-u-nio/package.json"
+    },
+    {
+      "name": "jg-jpush-u-oppo",
+      "android_config": "uni_modules/jg-jpush-u-oppo/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:oppo:",
+      "package_json": "uni_modules/jg-jpush-u-oppo/package.json"
+    },
+    {
+      "name": "jg-jpush-u-vivo",
+      "android_config": "uni_modules/jg-jpush-u-vivo/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:vivo:",
+      "package_json": "uni_modules/jg-jpush-u-vivo/package.json"
+    },
+    {
+      "name": "jg-jpush-u-xiaomi",
+      "android_config": "uni_modules/jg-jpush-u-xiaomi/utssdk/app-android/config.json",
+      "dep_prefix": "cn.jiguang.sdk.plugin:xiaomi:",
+      "package_json": "uni_modules/jg-jpush-u-xiaomi/package.json"
+    }
+  ],
+  "native_files": {
+    "android": [
+      "uni_modules/jg-jpush-u/utssdk/app-android/index.uts"
+    ],
+    "ios": [
+      "uni_modules/jg-jpush-u/utssdk/app-ios/index.uts"
+    ],
+    "harmony": [
+      "uni_modules/jg-jpush-u/utssdk/app-harmony/index.uts"
+    ]
+  },
+  "bridge_files": {
+    "uts": [
+      "uni_modules/jg-jpush-u/utssdk/interface.uts"
+    ]
+  },
+  "changelog_file": "uni_modules/jg-jpush-u/changelog.md",
+  "publish": {
+    "type": "dcloud",
+    "dcloud_upload_paths": [
+      "uni_modules/jg-jpush-u",
+      "uni_modules/jg-jpush-u-fcm",
+      "uni_modules/jg-jpush-u-huawei",
+      "uni_modules/jg-jpush-u-honor",
+      "uni_modules/jg-jpush-u-meizu",
+      "uni_modules/jg-jpush-u-nio",
+      "uni_modules/jg-jpush-u-oppo",
+      "uni_modules/jg-jpush-u-vivo",
+      "uni_modules/jg-jpush-u-xiaomi"
+    ]
+  }
+}

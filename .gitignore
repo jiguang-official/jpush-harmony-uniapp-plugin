@@ -6,3 +6,9 @@ unpackage/
 .temp/
 
 
+# Claude local settings
+.claude/settings.local.json
+
+# Claude update-sdk skill temp files
+.claude/skills/update-sdk/scripts/.sdk_download_result.json
+.claude/skills/update-sdk/scripts/.changelog_cache.json
