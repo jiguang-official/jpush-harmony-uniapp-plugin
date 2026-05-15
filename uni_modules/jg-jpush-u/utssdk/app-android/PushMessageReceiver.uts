@@ -13,6 +13,7 @@ import CmdMessage from 'cn.jpush.android.api.CmdMessage';
 import CustomMessage from 'cn.jpush.android.api.CustomMessage';
 import JPushMessage from 'cn.jpush.android.api.JPushMessage';
 import NotificationMessage from 'cn.jpush.android.api.NotificationMessage';
+import VoipDataMessage from 'cn.jpush.android.api.VoipDataMessage';
 import JPushMessageReceiver  from 'cn.jpush.android.service.JPushMessageReceiver';
 import JSONObject from 'org.json.JSONObject';
 
@@ -417,7 +418,7 @@ export class PushMessageReceiver extends JPushMessageReceiver {
     override onGeofenceRegion(context: Context, geofence: string, longitude: Double, latitude: Double): void {
         super.onGeofenceRegion(context, geofence, longitude, latitude);
         Log.e(PushMessageReceiver.TAG, "onGeofenceRegion: " + geofence);
-        
+
         // 触发地理围栏回调
         try {
             const jsonObject = new JSONObject();
@@ -428,6 +429,25 @@ export class PushMessageReceiver extends JPushMessageReceiver {
         } catch (e) {
             Log.e(PushMessageReceiver.TAG, "onGeofenceRegion JSON error: " + e.toString());
             this.triggerEventCallback('onGeofenceRegion', '{"geofence":"","longitude":0,"latitude":0}');
+        }
+    }
+
+    /**
+     * VOIP 透传消息回调（小米/荣耀/OPPO/VIVO 厂商通道）
+     */
+    override onVoipMessage(context: Context, voipDataMessage: VoipDataMessage): void {
+        super.onVoipMessage(context, voipDataMessage);
+        Log.e(PushMessageReceiver.TAG, "[onVoipMessage] " + voipDataMessage.toString());
+
+        try {
+            const jsonObject = new JSONObject();
+            jsonObject.put("messageId", voipDataMessage.getMessageId());
+            jsonObject.put("extraData", voipDataMessage.getExtraData());
+            jsonObject.put("platform", voipDataMessage.getPlatform());
+            this.triggerEventCallback('onVoipMessage', jsonObject.toString());
+        } catch (e) {
+            Log.e(PushMessageReceiver.TAG, "onVoipMessage JSON error: " + e.toString());
+            this.triggerEventCallback('onVoipMessage', '{"messageId":"","extraData":"","platform":0}');
         }
     }
 } 

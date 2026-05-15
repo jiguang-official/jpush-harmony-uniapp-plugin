@@ -278,6 +278,11 @@ export const setCountryCode = function (code:string) {
 	JCoreInterface.setCountryCode(UTSAndroid.getAppContext(), code)
 }
 
+export const setKeepLongConnInBackground = function (keep : boolean) {
+	console.log(TAG, "setKeepLongConnInBackground", keep)
+	JPushInterface.setKeepLongConnInBackground(UTSAndroid.getAppContext(), keep)
+}
+
 @UTSJS.keepAlive
 export function setEventCallBack(param : EventCallBackParams) : void {
 	eventCallbackManager.setEventCallBack(param)
