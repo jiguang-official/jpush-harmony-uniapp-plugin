@@ -1,7 +1,5 @@
 ## 1.2.6 (2026-05-15)
-
 Android/iOS JPush SDK 升级至 6.1.0，新增 setKeepLongConnInBackground 及 VOIP 消息回调，更新厂商推送 SDK 版本
-
 ## 1.2.5（2026-05-13）
 解决iOS偶现上报不了devicetoken的问题
 ## 1.2.4（2026-02-06）
